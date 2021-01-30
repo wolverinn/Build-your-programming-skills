@@ -23,6 +23,9 @@
 - command+shift+f: 路径下搜索
 - 双击shift：搜索全局
 - command＋／：注释，取消注释
+- 配置file watcher自动go fmt，goimports
+
+看完以上的入门内容之后，就可以自己写一些简单的程序了，这个时候可以再去看《The Go Programming Language》这本书，被称为“Go语言圣经”，书并不厚，内容比较基础但覆盖的比较全面。中文版的民间翻译也不错：[Go语言圣经（中文版）](http://books.studygolang.com/gopl-zh/)
 
 ## Useful Go Built-in Libraries
 当然，仅仅掌握最基本的用法，在开发中还是会遇到很多不顺手的地方，很多地方在实现的时候可能还是需要现场去查怎么用。但掌握了go的一些常用内置库的用法之后，开发起来就能顺手多了。下面介绍一些高频的内置库
@@ -77,7 +80,7 @@ time.Weekday() == time.Monday() // 判断是否为周一
 
 // 本月1号
 timeNow := time.Now
-firstOfMonth := time.Date()
+firstOfMonth := time.Date(timeNow.Year(), timeNow.Month(), 1, 0, 0, 0, 0, time.Local)
 ```
 
 ### encoding/json
@@ -146,7 +149,7 @@ rand.Shuffle(len(lst), func(i, j int) {lst[i], lst[j] = lst[j], lst[i]})
 获取命令行参数
 ```go
 if len(os.Args) > 1 {
-    // os.Args[0]是程序的地址，从索引1开始才是命令行参数
+    // os.Args[0]是命令本身的名字，从索引1开始才是命令行参数
     a := os.Args[1]
 }
 ```
@@ -214,13 +217,40 @@ utf8.RuneCountInString(str) // 判断长度
 str = string([]rune(str)[:4])
 ```
 
+## 包管理
+### Package
+go的文件都以```package PACKAGE_NAME```开头，表示这个文件属于哪个包，如果是```package main```表示这个文件是可以运行的。同一目录下的文件的package名称都相同。
+
+我们可以通过新建一个目录，在目录下新建若干go源文件的方式来创建自己的package，每个go源文件的的package的名字都是统一的（即我们创建的包的名字），它们也都属于同一个包，不同源文件中定义的函数也都可以互相使用，并不存在需要先声明再调用的限制。在该目录下可以使用```go build```对我们的包进行编译。
+
+在其他文件中，可以使用```import "path/to/PACKAGE_NAME"```来导入包，从而引用包中的结构体、函数等等。go不允许循环引用。使用```import ALIAS "path/to/PACKAGE_NAME"```的方式可以以别名的形式导入包。
+
+go也不允许导入未使用的包，如果我们需要使用某个包中的init()方法，但又不会使用这个包，可以使用```import _ PACKAGE```匿名导入。如果导入了未使用的包，编译会报错，一个比较好的方式是使用```goimports```工具，可以自动清除文件中未使用的导入包。对某个路径下的所有文件使用```goimports```的方法为：```goimports -w path/```
+
+在package中，我们可以定义一系列的变量、常量、类型、结构体、方法、函数等，如果我们定义的变量、函数、etc...的名称是大写开头，则这些变量、函数对于调用这个包的外部调用者是可见的，如果是小写开头，则这些变量、函数就叫做unexported（未导出的），**可以理解为私有方法**，只有在包的内部才能使用这些变量、函数。这样的方式提供了安全性和更好的封装性，包的调用者不需要关心一些实现细节，而是只使用包提供的方法。
+
+有些包中可能会需要一个初始化函数，来初始化一些全局变量，比如初始化某个map的长度，初始化一个数据库链接等等。在包中使用```init()```函数，则在初始化的时候，```init()```中的内容会自动执行。**每个包都会以导入的顺序进行初始化，然后main函数才会开始执行**。
+
+另一种初始化包级变量的方式是手动定义可导出的初始化函数，比如```InitMap()```，然后在主函数的文件的```init()```函数中，手动调用这个包的```InitMap()```
+
+### Go Module
+go提供了自己的包管理工具```go mod```，在环境变量中配置```export GO111MODULE=on```即可使用。```go mod```可以自动添加、删除、下载依赖，支持从常用的git仓库如GitHub下载依赖，非常易于使用。
+
+在项目中使用```go mod init```，会初始化一个```go.mod```文件，里面记录了项目文件中依赖的包以及对应版本。使用```go mod tidy```，则会自动整理（添加、删除）依赖，包括下载依赖包，但不会更新依赖包在```go.mod```中记录的版本。想要将某个依赖更新到最新版，可以使用```go get -u XXX```。
+
+有时会遇到某个依赖包的远程的某个版本被删掉了，这时编译时就会因为找不到对应版本而报错，解决方法是将依赖更新到最新版本。
+
+如果想要强制指定某个依赖的版本，比如因为兼容性问题不想更新到最新版的时候，则可以在```go.mod```中使用```replace```，比如：
+
+```replace github.com/golang/protobuf => github.com/golang/protobuf v1.3.5```
+
 ## 接下来的部分
 - gorm以及一些进阶用法
 - sort&interface，reflect
+- 匿名函数
 - slice和map的底层原理
 - defer的用法
 - catch panic
-- go mod注意事项，package，私有方法
 - goroutine
 - testing
 - 内存管理、垃圾回收？？？
