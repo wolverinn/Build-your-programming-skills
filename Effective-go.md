@@ -244,14 +244,144 @@ go提供了自己的包管理工具```go mod```，在环境变量中配置```exp
 
 ```replace github.com/golang/protobuf => github.com/golang/protobuf v1.3.5```
 
+## 函数进阶
+### 函数值
+函数也可以当作值来使用，一个简单的例子：
+```go
+func square(n int) int { return n * n }
+
+func main() {
+    f := square
+    fmt.Println(f(3)) // "9"
+}
+```
+
+函数像其他值一样，拥有类型，可以**被赋值给其他变量，传递给函数，从函数返回**。一个将函数值传递给函数的例子：
+```go
+func TryTimes(ctx context.Context, tryTime int, duration time.Duration, dofunc func() error) (err error) {
+	if tryTime < 1 && tryTime > 5 {
+		return fmt.Errorf("Error TryTime")
+	}
+	for i := 0; i < tryTime; i++ {
+		err = dofunc()
+		logs.CtxInfo(ctx, "try No.%v time err: %v", i, err)
+		if err == nil {
+			break
+		}
+		time.Sleep(duration)
+	}
+	return err
+}
+```
+
+### 匿名函数
+通过```func```关键字后面不带函数名的方式，我们可以定义匿名函数，比如用在上面定义的```TryTimes```函数中：
+```go
+err = TryTimes(ctx, 3, 0, func() error {
+    err := rpc.Call(...)
+    return err
+})
+```
+
+后面的defer语句中，也可以用到匿名函数，将匿名函数放在defer的后面。
+
+### 变长参数
+在声明函数时，通过在参数类型前面加上```...```可以让函数接收任意数量的该类型参数，在golang的```fmt.Sprintf```，```append```，gorm的```db.Where()```中都使用了这种方式。一个例子：
+
+```go
+func sum(vals ...int) int {
+    total := 0
+    for _, val := range vals {
+        total += val
+    }
+    return total
+}
+```
+
+### defer
+defer中的内容可以在函数**正常结束返回（return）**或者函数产生**panic异常结束**的时候得到执行，这一机制可以让我们方便地进行一些资源的释放，或者捕获panic异常，因为不管在函数执行过程中发生了什么，defer中的内容总是确保可以得到执行。
+
+在没有defer的情况下，我们需要小心地处理每一次错误返回以及异常处理，确保在函数返回时能够同时将开启的资源释放掉，这就意味着我们要在很多地方写上释放资源的语句。随着函数越来越复杂，维护清理逻辑将变得越来越困难。而使用defer之后，我们只需要在开启资源的时候同时加上一条defer语句回收资源，就能保证资源得到释放。
+
+defer常用的场景举例：
+```go
+// 加锁之后释放锁
+var mu sync.Mutex
+mu.Lock()
+defer mu.Unlock()
+
+// 关闭数据库链接
+rows := *sql.Rows
+defer rows.Close()
+
+// 释放文件资源
+f, _ := os.Open(filename)
+defer f.Close()
+```
+
+当然，defer还有一个常见用法是用来捕获运行时发生的panic异常，见下文。
+
+在函数中可以多次使用defer语句，最终这些defer语句的执行顺序按照先入后出（FILO）的原则，即**先声明的后执行**。
+
+defer的执行时机是在return之前，看如下两个例子：
+
+```go
+func testDeferReturn() int {
+   a := 1
+   defer func() {
+      a = 2
+   }()
+   return a // 返回 1
+}
+
+func testDeferReturn1() (ret int) {
+   ret = 1
+   defer func() {
+      ret = 2
+   }()
+   return ret // 返回 2
+}
+```
+
+### 捕获异常
+函数运行过程中有可能会发生panic，比如数组的索引越界，或者尝试访问一个未初始化的值为nil的map，或者尝试访问某个值为nil的结构体中的一些元素。如果这时不想让进程崩溃，可以使用```recover```捕获异常：
+
+```go
+func DoSomething() (err error) {
+    defer func() {
+        if p := recover(); p != nil {
+            err = fmt.Errorf("internal error: %v", p)
+        }
+    }()
+    /*
+    ...
+    */
+}
+```
+
+通过```runtime.Stack```，我们可以获取完整的堆栈调用信息，帮助我们更好地定位问题：
+
+```go
+import "runtime/debug"
+
+func DoSomething() (err error) {
+    defer func() {
+        if p := recover(); p != nil {
+            err = fmt.Errorf("internal error: %v", p)
+            logs.Printf("fatal panic, error: %v, stack: %v", p, debug.Stack())
+        }
+    }()
+    /*
+    ...
+    */
+}
+```
+
 ## 接下来的部分
-- gorm以及一些进阶用法
-- sort&interface，reflect
-- 匿名函数
-- slice和map的底层原理
-- defer的用法
-- catch panic
-- goroutine
+- sort&interface
+- reflect
+- goroutine，channels
 - testing
+- slice和map的底层原理
 - 内存管理、垃圾回收？？？
-- go web 编程
+- go web 编程，gorm以及一些进阶用法
