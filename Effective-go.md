@@ -1,4 +1,4 @@
-# Effective Go
+# Go Dance
 
 对于编程语言来说，可以简单地分为基础和高级用法两部分，基础用法主要在于自己多写，只要多写，慢慢就会熟练了，也没有看别人总结的必要。所以这里准备总结一下进阶用法。
 
@@ -217,6 +217,59 @@ utf8.RuneCountInString(str) // 判断长度
 str = string([]rune(str)[:4])
 ```
 
+### sort
+sort包使得我们可以对自定义的一些类型进行排序，而我们需要做的就是对我们想要排序的类型实现```Len()```，```Less()```，和```Swap()```三个方法，之后就可以调用```sort.Sort()```进行排序。比如，我们自定义了一种结构体：
+
+```go
+type Person struct {
+    Name string
+    Age int
+}
+```
+
+那么，当我们相对一个```[]Person```类型的变量进行排序的时候，我们首先需要对```[]Person```这种类型实现一下```Len()```，```Less()```，和```Swap()```三个方法：
+
+```go
+type PersonSlice []Person
+
+func(p *PersonSlice) Len() int {
+    return len(p)
+}
+func (p *PersonSlice) Swap(i, j int) {
+    p[i], p[j] = p[j], p[i]
+}
+func (p *PersonSlice) Less(i, j int) bool {
+    return p[i].age < p[j].age  // 如果要从高到低排则交换一下顺序即可
+}
+```
+
+接下来就可以直接调用sort包进行排序了：
+
+```go
+var ps []Person // 这里省略初始化
+
+sort.Sort(PersonSlice(ps)) // 先进行类型转换，将ps转换为PersonSlice类型
+```
+
+当然，对于一些基础的类型：```int```，```float64```，```string```，sort包已经内置了对它们的排序函数，直接调用```sort.Strings()```就行
+
+### testing
+简单介绍一下golang中的测试函数，使用测试函数我们可以方便地测试代码，比如我们在某个包中实现了一些函数，想要测试函数的功能是否符合预期，这时专门为这些函数去写一个main函数来执行显得有些麻烦，而通过测试函数我们可以实现这一目的。
+
+在包目录内，新建一个以```_test.go```结尾的文件，然后把测试代码放在这个文件里面。在构建代码的时候，```*_test.go```不会被构建为包的一部分。
+
+在```*_test.go```文件中，我们可以开始写我们的测试函数，测试函数需要以```Test```开头，并且需要使用testing包，函数的后缀名需要以大写开头，比如：
+
+```go
+fun TestName(t *testing.T) {
+    /*
+    ...
+    */
+}
+```
+
+写好测试函数之后，我们在包目录下，运行```go test```，然后包下面的所有测试函数都会得到调用，并且输出结果
+
 ## 包管理
 ### Package
 go的文件都以```package PACKAGE_NAME```开头，表示这个文件属于哪个包，如果是```package main```表示这个文件是可以运行的。同一目录下的文件的package名称都相同。
@@ -378,10 +431,9 @@ func DoSomething() (err error) {
 ```
 
 ## 接下来的部分
-- sort&interface
-- reflect
+- interface，reflect
 - goroutine，channels
-- testing
+
+- go web 编程，gorm以及一些进阶用法
 - slice和map的底层原理
 - 内存管理、垃圾回收？？？
-- go web 编程，gorm以及一些进阶用法
