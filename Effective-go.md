@@ -430,10 +430,107 @@ func DoSomething() (err error) {
 }
 ```
 
-## 接下来的部分
-- interface，reflect
-- goroutine，channels
+## Interface & Reflect
+todo：[Interface](https://bytedance.feishu.cn/docs/doccnwupHeQDHOdgkSxJeyFNqDf)
 
-- go web 编程，gorm以及一些进阶用法
+## 并发编程：Goroutines，Channels，sync包
+todo
+### Goroutines
+在Go语言中，每一个并发的执行单元叫作一个goroutine。使用go关键字即可以创建一个goroutine，使得我们能够并发执行一些任务：
+
+```go
+go func() () {
+    // ...
+}()
+```
+
+goroutine是并发执行的，不会阻塞下面的操作。但如果我们使用了多个goroutine，并且想要等待这些goroutine全都运行完毕再执行下一步的操作，这时可以使用```sync.WaitGroup```：
+
+```go
+wg := sync.WaitGroup{}
+
+wg.Add(1)
+go func() () {
+    defer wg.Done()
+    // ...
+}()
+wg.Add(1)
+go func() () {
+    defer wg.Done()
+    // ...
+}()
+...
+
+wg.Wait() // 等待上面的goroutine都执行完毕
+```
+
+### Channels
+一个channel是一个通信机制，它可以让一个goroutine通过它给另一个goroutine发送值信息。每个channel都有一个特殊的类型，也就是channels可发送数据的类型。一个可以发送int类型数据的channel一般写为chan int。一个channel有发送和接受两个主要操作
+
+```go
+ch := make(chan int) // ch has type 'chan int'，是一个不带缓存的channel
+
+ch <- x  // a send statement
+x = <-ch // a receive expression in an assignment statement
+<-ch     // a receive statement; result is discarded
+
+for x := range ch {
+    fmt.Println(x) // channel支持range操作，当channel关闭且没有值可接收时for循环退出
+}
+
+close(ch) // 关闭操作
+x, ok := <-ch // 对于已经关闭的channel，ok为false
+```
+
+Channel还支持close操作，用于关闭channel，随后对基于该channel的任何发送操作都将导致panic异常。对一个已经被close过的channel进行接收操作依然可以接受到之前已经成功发送的数据；如果channel中已经没有数据的话将产生一个零值的数据。试图重复关闭一个channel将导致panic异常，试图关闭一个nil值的channel也将导致panic异常。
+
+channel分为带缓存的和不带缓存的两种。一个基于无缓存Channels的发送操作将导致发送者goroutine阻塞，直到另一个goroutine在相同的Channels上执行接收操作；反之，如果接收操作先发生，那么接收者goroutine也将阻塞，直到有另一个goroutine在相同的Channels上执行发送操作。
+
+通过```ch := make(chan string, 3)```的方式可以创建一个带缓存的channel，如果内部缓存队列是满的，那么发送操作将阻塞直到因另一个goroutine执行接收操作而释放了新的队列空间。相反，如果channel是空的，接收操作将阻塞直到有另一个goroutine执行发送操作而向队列插入元素。内置的```cap()```可以获取channel的容量，而```len()```可以获取channel中有效元素的个数。
+
+select语句会选择case中能够执行的语句去执行，有点类似switch，如果多个case同时就绪时，select会随机地选择一个执行
+
+```go
+for {
+    select {
+    case <-ch1:
+        // ...
+    case x := <-ch2:
+        // ...use x...
+    case ch3 <- y:
+        // ...
+    default:
+        // ...
+        return
+    }
+}
+```
+
+### sync.Mutex
+```sync.Mutex```提供了互斥锁：
+
+```go
+var mu sync.Mutex
+
+func DoSomething() {
+    mu.Lock() // 如果已经上锁，则这一步会阻塞直到锁被释放
+    defer mu.Unlock()
+    // ...
+}
+```
+
+除此之外，还有```sync.RWMutex```，```sync.Once```也提供了很不错的特性。
+
+## Go Web编程
+开发中都是用的框架，基本上只需要关注得到request参数之后处理返回response的逻辑部分。所以如果想要了解更多，可以去看：[Go web 编程](https://astaxie.gitbooks.io/build-web-application-with-golang/content/zh/)
+
+### Gorm操作数据库
+gorm框架是go web编程中操作数据库的一个常用的库，基本用法可以参考写的很不错的[官方文档](https://gorm.io/zh_CN/docs/query.html)，你可能还需要这个工具：[sql2go](http://stming.cn/tool/sql2go.html)
+
+除此之外，我总结了一些gorm的进阶用法，这里单独写一下。
+
+todo：[gorm trick](https://bytedance.feishu.cn/docs/doccnyJiLVDaeFrsuec5yFczU1g)
+
+## Todo
 - slice和map的底层原理
-- 内存管理、垃圾回收？？？
+- 内存管理、垃圾回收
