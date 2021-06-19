@@ -532,5 +532,8 @@ gorm框架是go web编程中操作数据库的一个常用的库，基本用法�
 todo：[gorm trick](https://bytedance.feishu.cn/docs/doccnyJiLVDaeFrsuec5yFczU1g)
 
 ## Todo
-- slice和map的底层原理
+- (slice和map的底层原理)[https://blog.golang.org/slices-intro]
 - 内存管理、垃圾回收
+- golang深度：https://draveness.me/golang/
+- go web 高级编程：https://chai2010.cn/advanced-go-programming-book/ch1-basic/ch1-01-genesis.html
+- go高性能编程：https://geektutu.com/post/high-performance-go.html
