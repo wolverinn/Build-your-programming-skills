@@ -338,6 +338,22 @@ err = TryTimes(ctx, 3, 0, func() error {
 
 后面的defer语句中，也可以用到匿名函数，将匿名函数放在defer的后面。
 
+匿名函数中如果捕获了外部变量，称为闭包（closure），闭包对捕获的外部变量并不是传值方式访问，而是以引用的方式访问。
+
+有两种匿名函数的写法需要注意一下：
+
+```go
+var i int
+
+defer fmt.Println(i) // 即刻确定i
+
+defer func() {
+    fmt.Println(i) // 运行结束捕获i
+}
+
+i += 1
+```
+
 ### 变长参数
 在声明函数时，通过在参数类型前面加上```...```可以让函数接收任意数量的该类型参数，在golang的```fmt.Sprintf```，```append```，gorm的```db.Where()```中都使用了这种方式。一个例子：
 
@@ -488,6 +504,23 @@ channel分为带缓存的和不带缓存的两种。一个基于无缓存Channel
 
 通过```ch := make(chan string, 3)```的方式可以创建一个带缓存的channel，如果内部缓存队列是满的，那么发送操作将阻塞直到因另一个goroutine执行接收操作而释放了新的队列空间。相反，如果channel是空的，接收操作将阻塞直到有另一个goroutine执行发送操作而向队列插入元素。内置的```cap()```可以获取channel的容量，而```len()```可以获取channel中有效元素的个数。
 
+可以通过带缓存的管道来实现最大并发数控制：
+
+```go
+var limit = make(chan int, 3)
+
+func main() {
+    for _, w := range work {
+        go func() {
+            limit <- 1
+            w()
+            <-limit
+        }()
+    }
+    select{}
+}
+```
+
 select语句会选择case中能够执行的语句去执行，有点类似switch，如果多个case同时就绪时，select会随机地选择一个执行
 
 ```go
@@ -499,6 +532,8 @@ for {
         // ...use x...
     case ch3 <- y:
         // ...
+    case <-time.After(time.Second):
+        // ... timeout
     default:
         // ...
         return
@@ -521,8 +556,26 @@ func DoSomething() {
 
 除此之外，还有```sync.RWMutex```，```sync.Once```也提供了很不错的特性。
 
+基于`sync.Once`重新实现单例模式：
+
+```go
+var (
+    instance *singleton
+    once     sync.Once
+)
+
+func Instance() *singleton {
+    once.Do(func() {
+        instance = &singleton{}
+    })
+    return instance
+}
+```
+
 ## Go Web编程
-开发中都是用的框架，基本上只需要关注得到request参数之后处理返回response的逻辑部分。所以如果想要了解更多，可以去看：[Go web 编程](https://astaxie.gitbooks.io/build-web-application-with-golang/content/zh/)
+开发中都是用的框架，基本上只需要关注得到request参数之后处理返回response的逻辑部分。所以如果想要了解更多，可以去看：
+- [Go web 编程](https://astaxie.gitbooks.io/build-web-application-with-golang/content/zh/)
+- [Go语言高级编程](https://chai2010.cn/advanced-go-programming-book/ch4-rpc/readme.html)：包含了rpc和http的一些源码实现分析，写的还不错
 
 ### Gorm操作数据库
 gorm框架是go web编程中操作数据库的一个常用的库，基本用法可以参考写的很不错的[官方文档](https://gorm.io/zh_CN/docs/query.html)，你可能还需要这个工具：[sql2go](http://stming.cn/tool/sql2go.html)
