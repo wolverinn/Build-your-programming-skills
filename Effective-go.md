@@ -25,7 +25,15 @@
 - command＋／：注释，取消注释
 - 配置file watcher自动go fmt，goimports
 
+## 进阶指南
 看完以上的入门内容之后，就可以自己写一些简单的程序了，这个时候可以再去看《The Go Programming Language》这本书，被称为“Go语言圣经”，书并不厚，内容比较基础但覆盖的比较全面。中文版的民间翻译也不错：[Go语言圣经（中文版）](http://books.studygolang.com/gopl-zh/)
+
+之后可以沿着下面几个方向来进阶学习：
+
+1. 并发编程专题：Go语言圣经中也有，也比较推荐[Go语言高级编程](https://chai2010.cn/advanced-go-programming-book/ch4-rpc/readme.html)中第一章的并发部分
+2. 性能优化专项：可以多看一些博客文章，以及推荐[Go 语言高性能编程](https://geektutu.com/post/high-performance-go.html)
+3. Go Web编程：如果是为了开发工作的话不看也行，而看的目的就说要上升到源码，这一步开始就可以追求源码级了解了。参考的电子书：[Go语言高级编程](https://chai2010.cn/advanced-go-programming-book/ch4-rpc/readme.html)
+4. Go著名项目，源码分析：比如消息队列、grpc、gin、分布式缓存groupcache，也可以参考[7days-golang](https://github.com/geektutu/7days-golang)
 
 ## Useful Go Built-in Libraries
 当然，仅仅掌握最基本的用法，在开发中还是会遇到很多不顺手的地方，很多地方在实现的时候可能还是需要现场去查怎么用。但掌握了go的一些常用内置库的用法之后，开发起来就能顺手多了。下面介绍一些高频的内置库
@@ -447,7 +455,7 @@ func DoSomething() (err error) {
 ```
 
 ## Interface & Reflect
-todo：[Interface](https://bytedance.feishu.cn/docs/doccnwupHeQDHOdgkSxJeyFNqDf)
+[Interface](./golang/Golang%20Interface%20&%20Reflect.md)
 
 ## 并发编程：Goroutines，Channels，sync包
 todo
@@ -574,7 +582,7 @@ func Instance() *singleton {
 
 ## Go Web编程
 开发中都是用的框架，基本上只需要关注得到request参数之后处理返回response的逻辑部分。所以如果想要了解更多，可以去看：
-- [Go web 编程](https://astaxie.gitbooks.io/build-web-application-with-golang/content/zh/)
+- [Go web 编程](https://astaxie.gitbooks.io/build-web-application-with-golang/content/zh/)：这本电子书是作者从零开始介绍如何自己实现常用的web操作，个人感觉可能不如直接去看流行的web框架源码分析
 - [Go语言高级编程](https://chai2010.cn/advanced-go-programming-book/ch4-rpc/readme.html)：包含了rpc和http的一些源码实现分析，写的还不错
 
 ### Gorm操作数据库
@@ -582,11 +590,9 @@ gorm框架是go web编程中操作数据库的一个常用的库，基本用法�
 
 除此之外，我总结了一些gorm的进阶用法，这里单独写一下。
 
-todo：[gorm trick](https://bytedance.feishu.cn/docs/doccnyJiLVDaeFrsuec5yFczU1g)
+[gorm trick](./golang/Gorm一些比较trick的用法踩坑总结.md)
 
 ## Todo
 - (slice和map的底层原理)[https://blog.golang.org/slices-intro]
 - 内存管理、垃圾回收
 - golang深度：https://draveness.me/golang/
-- go web 高级编程：https://chai2010.cn/advanced-go-programming-book/ch1-basic/ch1-01-genesis.html
-- go高性能编程：https://geektutu.com/post/high-performance-go.html

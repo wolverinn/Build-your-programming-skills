@@ -3,7 +3,13 @@ A learning road map for junior programmers focusing from basic to advanced techn
 
 工作之后，应该如何规划自己的技术学习路线？可以学的太多，但我们不能什么都学，而是应该有一个清晰的roadmap，一步一步慢慢积累，这样才能获得最大的加速度
 
-暂时分几个方面来记录一下我的看法：
+这个仓库主要是记录我的学习笔记，会随着我的技术学习不断更新。目前有以下部分的内容：
+
+- [Git](./Git-basic.md)
+- [Golang](./Effective-go.md)
+
+------
+剩余的篇幅，简单记录一下我所规划的技术学习路线，即我的roadmap：
 
 ## 计算机基础知识
 包括：
@@ -25,14 +31,16 @@ A learning road map for junior programmers focusing from basic to advanced techn
 - vim
 - Linux shell：常用shell命令
 
+## 开发语言
 还有一个，开发语言golang，不过golang需要掌握的地方稍微多一些，可能需要比上述工具要深入一些，做到effective go：
 
 - 基础语法、常用标准库、包管理
 - for、slice、map底层原理
 - defer、panic、recover
 - interface
-- Goroutines，Channels，锁
+- 并发编程：Goroutines，Channels，锁
 - gc
+- 性能优化专项
 
 ## 进阶
 
@@ -58,6 +66,7 @@ https://juejin.cn/user/2418581312906087/books?type=bought
 - https://www.1point3acres.com/bbs/thread-683982-1-1.html
 - https://www.1point3acres.com/bbs/thread-692488-1-1.html
 - https://www.1point3acres.com/bbs/thread-559285-1-1.html
+- https://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=771667&ctid=233194
 
 ## 源码
 
@@ -66,4 +75,4 @@ https://juejin.cn/user/2418581312906087/books?type=bought
 - 消息队列
 - gRpc
 - ginex
-- golang的缓存？
+- golang的缓存/友好的开源项目
