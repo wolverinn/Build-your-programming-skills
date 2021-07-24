@@ -30,10 +30,11 @@
 
 之后可以沿着下面几个方向来进阶学习：
 
-1. 并发编程专题：Go语言圣经中也有，也比较推荐[Go语言高级编程](https://chai2010.cn/advanced-go-programming-book/ch4-rpc/readme.html)中第一章的并发部分
+1. 并发编程专题：Go语言圣经中也有，也比较推荐[Go语言高级编程](https://chai2010.cn/advanced-go-programming-book/ch1-basic/ch1-05-mem.html)中第一章的并发部分
 2. 性能优化专项：可以多看一些博客文章，以及推荐[Go 语言高性能编程](https://geektutu.com/post/high-performance-go.html)
-3. Go Web编程：如果是为了开发工作的话不看也行，而看的目的就说要上升到源码，这一步开始就可以追求源码级了解了。参考的电子书：[Go语言高级编程](https://chai2010.cn/advanced-go-programming-book/ch4-rpc/readme.html)
-4. Go著名项目，源码分析：比如消息队列、grpc、gin、分布式缓存groupcache，也可以参考[7days-golang](https://github.com/geektutu/7days-golang)
+3. Go底层原理，包括并发（sync包）；slice与map的底层实现；内存管理、垃圾回收；Goroutine，调度器
+4. Go Web编程：如果是为了开发工作的话不看也行，而看的目的就说要上升到源码，这一步开始就可以追求源码级了解了。参考的电子书：[Go语言高级编程](https://chai2010.cn/advanced-go-programming-book/ch4-rpc/readme.html)
+5. Go著名项目，源码分析：比如消息队列、grpc、gin、分布式缓存groupcache，也可以参考[7days-golang](https://github.com/geektutu/7days-golang)
 
 ## Useful Go Built-in Libraries
 当然，仅仅掌握最基本的用法，在开发中还是会遇到很多不顺手的地方，很多地方在实现的时候可能还是需要现场去查怎么用。但掌握了go的一些常用内置库的用法之后，开发起来就能顺手多了。下面介绍一些高频的内置库
@@ -297,13 +298,24 @@ go也不允许导入未使用的包，如果我们需要使用某个包中的ini
 ### Go Module
 go提供了自己的包管理工具```go mod```，在环境变量中配置```export GO111MODULE=on```即可使用。```go mod```可以自动添加、删除、下载依赖，支持从常用的git仓库如GitHub下载依赖，非常易于使用。
 
-在项目中使用```go mod init```，会初始化一个```go.mod```文件，里面记录了项目文件中依赖的包以及对应版本。使用```go mod tidy```，则会自动整理（添加、删除）依赖，包括下载依赖包，但不会更新依赖包在```go.mod```中记录的版本。想要将某个依赖更新到最新版，可以使用```go get -u XXX```。
+在项目中使用```go mod init```，会初始化一个```go.mod```文件，里面记录了项目文件中依赖的包以及对应版本。使用```go mod tidy```，则会自动整理（添加、删除）依赖，包括下载依赖包，但不会更新依赖包在```go.mod```中记录的版本。想要将某个依赖更新到最新版，可以使用```go get XXX```。关于`go get`有几点冷知识：
 
-有时会遇到某个依赖包的远程的某个版本被删掉了，这时编译时就会因为找不到对应版本而报错，解决方法是将依赖更新到最新版本。
+- `go get XXX`某个包，如果这个包之前是用语义化版本控制的，也就是git上打tag的`v1.0.4`的这种形式，那么`go get`只会更新这个包到最新的语义化版本，也就是说如果有最新的commit没有打tag，使用`go get`还是不能更新到这个commit，这时可以用`get get XXX@master`
+- `go get -u XXX`中的`-u`参数不是更新到最新版本的意思，而是指同时更新该依赖中所有参与编译的依赖到最新版本
+- 若`go get`的目标package为main，还会同时编译安装二进制到`$GOPATH/bin`
+
+如果多个依赖包中对某个特定依赖包的依赖版本不同，`go mod`会选择所有依赖版本中最高的那个版本
 
 如果想要强制指定某个依赖的版本，比如因为兼容性问题不想更新到最新版的时候，则可以在```go.mod```中使用```replace```，比如：
 
 ```replace github.com/golang/protobuf => github.com/golang/protobuf v1.3.5```
+
+使用`go mod graph`可以查看所有依赖项之间的依赖关系，比如用`go mod graph | grep XXX`可以查到某个依赖项是如何被依赖的。
+
+常见报错：
+
+- 升级了某个依赖之后，编译报错。原因一般是使用了`go get -u`同时升级了依赖的依赖，而导致了不兼容，所以如无必要，不使用`-u`参数
+- `unknown revision v1.X.X`：该依赖包的远程的某个版本被删掉了，这时编译时就会因为找不到对应版本而报错，解决方法是将依赖更新到最新版本
 
 ## 函数进阶
 ### 函数值
@@ -360,6 +372,24 @@ defer func() {
 }
 
 i += 1
+```
+
+再看一个例子加深理解：
+
+```go
+func Increase() func() int {
+	n := 0
+	return func() int { // 这里返回了一个闭包函数，该函数访问了外部变量n
+		n++
+		return n
+	}
+}
+
+func main() {
+	in := Increase()
+	fmt.Println(in()) // 1
+	fmt.Println(in()) // 2
+}
 ```
 
 ### 变长参数
@@ -549,6 +579,8 @@ for {
 }
 ```
 
+需要注意的是，select中如果用了break，跳出的只是select，而不是外面的for循环
+
 ### sync.Mutex
 ```sync.Mutex```提供了互斥锁：
 
@@ -564,7 +596,19 @@ func DoSomething() {
 
 除此之外，还有```sync.RWMutex```，```sync.Once```也提供了很不错的特性。
 
-基于`sync.Once`重新实现单例模式：
+`sync.RWMutex`提供了读写锁，一般有以下几种情况：
+
+- 在没有写锁的情况下，读锁是无阻塞的
+- 写锁之间互斥，存在写锁，则其他写锁阻塞
+- 写锁和读锁之间互斥，存在写锁则读锁阻塞，存在读锁则写锁阻塞
+
+使用`sync.RWMutex`加读写锁的方法：
+
+
+- Lock 加写锁；Unlock 释放写锁
+- RLock 加读锁；RUnlock 释放读锁
+
+`sync.Once`一般用于初始化变量，好处是可以在代码任意位置用到的时候再初始化，而不一定要放在init中，并且并发场景下是线程安全的，基于`sync.Once`重新实现单例模式：
 
 ```go
 var (
@@ -595,4 +639,3 @@ gorm框架是go web编程中操作数据库的一个常用的库，基本用法�
 ## Todo
 - (slice和map的底层原理)[https://blog.golang.org/slices-intro]
 - 内存管理、垃圾回收
-- golang深度：https://draveness.me/golang/

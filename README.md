@@ -6,7 +6,10 @@ A learning road map for junior programmers focusing from basic to advanced techn
 这个仓库主要是记录我的学习笔记，会随着我的技术学习不断更新。目前有以下部分的内容：
 
 - [Git](./Git-basic.md)
-- [Golang](./Effective-go.md)
+- Golang，分为几个部分：
+    - [Effective Go](./Effective-go.md)
+    - [Golang性能优化与最佳实践](./Go-Best-Practice.md)
+    - Go Dive（底层原理解析）
 
 ------
 剩余的篇幅，简单记录一下我所规划的技术学习路线，即我的roadmap：
