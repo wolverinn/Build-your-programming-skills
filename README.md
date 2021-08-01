@@ -7,9 +7,9 @@ A learning road map for junior programmers focusing from basic to advanced techn
 
 - [Git](./Git-basic.md)
 - Golang，分为几个部分：
-    - [Effective Go](./Effective-go.md)
-    - [Golang性能优化与最佳实践](./Go-Best-Practice.md)
-    - Go Dive（底层原理解析）
+    1. [Effective Go](./Effective-go.md)
+    2. [Golang性能优化与最佳实践](./Go-Best-Practice.md)
+    3. [Go Dive（底层原理解析）](./Go-dive.md)
 
 ------
 剩余的篇幅，简单记录一下我所规划的技术学习路线，即我的roadmap：

@@ -279,6 +279,14 @@ fun TestName(t *testing.T) {
 
 写好测试函数之后，我们在包目录下，运行```go test```，然后包下面的所有测试函数都会得到调用，并且输出结果
 
+## 内置变量类型冷知识
+插入一个内容，是我从[Go语言圣经](http://books.studygolang.com/gopl-zh/)里看到的，和常用的变量类型有关，个人觉得算冷知识：
+
+- `int`型的大小是32或者64bit，和编译器有关
+- 浮点数到整数的转换将丢失任何小数部分，然后向数轴零方向截断
+- 一个float32类型的浮点数可以提供大约6个十进制数的精度，而float64则可以提供约15个十进制数的精度；通常应该优先使用float64类型，因为float32类型的累计计算误差很容易扩散，并且float32能精确表示的正整数并不是很大（译注：因为float32的有效bit位只有23个，其它的bit位用于指数和符号；当整数大于23bit能表达的范围时，float32的表示将出现误差）
+- 在``形式的字符串中，没有转义操作
+
 ## 包管理
 ### Package
 go的文件都以```package PACKAGE_NAME```开头，表示这个文件属于哪个包，如果是```package main```表示这个文件是可以运行的。同一目录下的文件的package名称都相同。
@@ -630,12 +638,8 @@ func Instance() *singleton {
 - [Go语言高级编程](https://chai2010.cn/advanced-go-programming-book/ch4-rpc/readme.html)：包含了rpc和http的一些源码实现分析，写的还不错
 
 ### Gorm操作数据库
-gorm框架是go web编程中操作数据库的一个常用的库，基本用法可以参考写的很不错的[官方文档](https://gorm.io/zh_CN/docs/query.html)，你可能还需要这个工具：[sql2go](http://stming.cn/tool/sql2go.html)
+gorm框架是go web编程中操作数据库的一个常用的库，基本用法可以参考写的很不错的[官方文档](https://gorm.io/zh_CN/docs/query.html)，你可能还需要这个工具：[sql2go](https://sql2gorm.mccode.info/)
 
 除此之外，我总结了一些gorm的进阶用法，这里单独写一下。
 
 [gorm trick](./golang/Gorm一些比较trick的用法踩坑总结.md)
-
-## Todo
-- (slice和map的底层原理)[https://blog.golang.org/slices-intro]
-- 内存管理、垃圾回收
