@@ -146,6 +146,62 @@ func makeSpanClass(sizeclass uint8, noscan bool) spanClass {
 - [Go内存分配那些事，就这么简单！](https://mp.weixin.qq.com/s/3gGbJaeuvx4klqcv34hmmw)
 - [图解Go语言内存分配](https://qcrao.com/2019/03/13/graphic-go-memory-allocation/)
 
+# Golang Memery Model
+在同一个Goroutine中，如果我们有下面的语句：
+
+```go
+a = 1
+b = 3
+```
+
+我们可以保证这几条赋值语句是按顺序执行的。但是，对于另一个Goroutine来说，它所观察到的顺序可能不是我们在代码里看到的顺序，比如，它可能先观察到`b = 3`，然后`a = 1`。至于原因可以了解一下CPU缓存一致性协议MESI，以及有了MESI之后为什么还会有缓存一致性问题。
+
+那这会造成什么问题呢？比如我们可以看一下下面这些有问题的代码：
+
+```go
+var a, b int
+
+func f() {
+	a = 1
+	b = 2
+}
+func main() {
+	go f()
+	print(a)
+    print(b)
+}
+```
+
+打印出来的a和b的值可能是赋值之后的，也可能是0
+
+因此，Go内存模型其实是一个概念，指定了某些条件，在这些条件下，可以保证在一个Goroutine中对一个共享变量的写入，可以被另一个Goroutine观察到。
+
+## 什么是 Happens Before
+就是字面意思，两个语句`a = 1; b = 3`只有三种情况：
+
+1. `a = 1` happens before `b = 3`
+2. `a = 1` happens after `b = 3`
+3. `a = 1` and `b = 3` happen concurrently
+
+如果对一个变量的赋值操作w要保证被另一个读取操作r观察到，运用 Happens before 概念，我们可以得出需要满足如下条件：
+
+- w happens before r
+- 任何其他对变量的赋值操作要么happens before w，要么happens after r
+
+下面介绍一些在Go编程中可以确定是 happens before 的语句（不全，更详细的可以参考官方文档）
+
+## init()
+如果在`package a`中导入了`package b`，那么`package b`的`init()` happens before `package a`的`init()`
+
+## channel
+- 对一个channel的发送操作 happens before 接收操作完成
+- 对一个channel进行`close()` happens before 接收到零值
+- 对一个无缓冲channel的接收操作 happens before 发送操作完成（意思就是发送会阻塞，直到被接收）
+- 带缓冲的channel也是一样，超出缓冲区的发送会阻塞
+
+## 推荐阅读
+关于 Golang Memory Model，就推荐一篇文章，[官方文章](https://golang.org/ref/mem)，讲的很清楚：
+
 # Golang GC
 三色标记法，直接看：
 
