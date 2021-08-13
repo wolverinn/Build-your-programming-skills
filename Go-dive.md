@@ -174,6 +174,28 @@ func main() {
 
 打印出来的a和b的值可能是赋值之后的，也可能是0
 
+再来看另一个有问题的代码：
+
+```go
+var a string
+var done bool
+
+func setup() {
+    a = "hello, world"
+    done = true
+}
+
+func main() {
+    go setup()
+    for !done {}
+    print(a)
+}
+```
+
+我们创建了`setup`线程，用于对字符串a的初始化工作，初始化完成之后设置done标志为true。main函数所在的主线程中，通过`for !done {}`检测done变为true时，认为字符串初始化工作完成，然后进行字符串的打印工作。
+
+但是Go语言并不保证在main函数中观测到的对done的写入操作发生在对字符串a的写入的操作之后，因此程序很可能打印一个空字符串。更糟糕的是，因为两个线程之间没有同步事件，`setup`线程对done的写入操作甚至无法被main线程看到（可能始终在CPU寄存器中），main函数有可能陷入死循环中。
+
 因此，Go内存模型其实是一个概念，指定了某些条件，在这些条件下，可以保证在一个Goroutine中对一个共享变量的写入，可以被另一个Goroutine观察到。
 
 ## 什么是 Happens Before
@@ -199,13 +221,90 @@ func main() {
 - 对一个无缓冲channel的接收操作 happens before 发送操作完成（意思就是发送会阻塞，直到被接收）
 - 带缓冲的channel也是一样，超出缓冲区的发送会阻塞
 
+对于最开始的那几段有问题的代码，解决办法就是通过同步原语来给两个事件明确排序。可以用`sync.Mutex()`，也可以用``channel
+
 ## 推荐阅读
-关于 Golang Memory Model，就推荐一篇文章，[官方文章](https://golang.org/ref/mem)，讲的很清楚：
+关于 Golang Memory Model，就推荐一篇文章，[官方文章](https://golang.org/ref/mem)，讲的很清楚
 
 # Golang GC
 三色标记法，直接看：
 
 [Golang垃圾回收(GC)介绍](https://liangyaopei.github.io/2021/01/02/golang-gc-intro/)
+
+# Golang Scheduler
+Go的运行时（Runtime）管理着调度、垃圾回收以及goroutine的运行环境，本次主要介绍调度器（scheduler）。
+
+![go runtime](vx_images/842442070851.png =430x)
+
+为什么需要调度器？主要是为了方便高并发程序的编写。线程是CPU调度的实体，但线程切换还是有一定代价的。Goroutine更加轻量，程序员只需要面对Goroutine，由scheduler将Goroutine调度到线程上执行。
+
+所谓M:N模型就是指，N个goroutine在M个线程上执行。
+
+## goroutine和线程的区别
+
+1. 内存占用
+创建一个 goroutine 的栈内存消耗为 2 KB，实际运行过程中，如果栈空间不够用，会自动进行扩容。创建一个 thread 则需要消耗 1 MB 栈内存，而且还需要一个被称为 “a guard page” 的区域用于和其他 thread 的栈空间进行隔离。
+
+对于一个用 Go 构建的 HTTP Server 而言，对到来的每个请求，创建一个 goroutine 用来处理是非常轻松的一件事。而如果用一个使用线程作为并发原语的语言构建的服务，例如 Java 来说，每个请求对应一个线程则太浪费资源了，很快就会出 OOM 错误（OutOfMermoryError）。
+
+2. 创建和销毀
+Thread 创建和销毀都会有巨大的消耗，因为要和操作系统打交道，是内核级的，通常解决的办法就是线程池。而 goroutine 因为是由 Go runtime 负责管理的，创建和销毁的消耗非常小，是用户级。
+
+3. 切换
+当 threads 切换时，需要保存各种寄存器，以便将来恢复：
+
+16 general purpose registers, PC (Program Counter), SP (Stack Pointer), segment registers, 16 XMM registers, FP coprocessor state, 16 AVX registers, all MSRs etc.
+
+而 goroutines 切换只需保存三个寄存器：Program Counter, Stack Pointer and BP。
+
+一般而言，线程切换会消耗 1000-1500 纳秒，一个纳秒平均可以执行 12-18 条指令。所以由于线程切换，执行指令的条数会减少 12000-18000。
+
+Goroutine 的切换约为 200 ns，相当于 2400-3600 条指令。
+
+因此，goroutines 切换成本比 threads 要小得多。
+
+## 调度器：M，P和G
+调度器的底层实现主要有三个数据结构：`m`, `p`, `g`
+
+- `g`：一个`g`表示了一个goroutine，主要包含了当前goroutine栈的一些字段
+- `m`：代表一个操作系统的线程，goroutine需要调度到`m`上运行。`m`可以理解为“machine”
+- `p`：一个抽象的处理器，可以理解为**Logical Processor**，通常P的数量等于CPU核数（GOMAXPROCS）。`m`需要获得`p`才能运行`g`
+
+早期版本的Golang是没有P的，调度是由G与M完成。 这样的问题在于每当创建、终止Goroutine或者需要调度时，需要一个全局的锁来保护调度的相关对象。 全局锁严重影响Goroutine的并发性能。
+
+先看一张图理解`g`，`m`，`p`之间的交互关系：
+
+![g-m-p overview](vx_images/2564429089278.png =640x)
+
+每个`p`都维护了一个自己的LocalQueue，里面是一个`g`的队列，除此之外还有一个全局的GlobalQueue，存储全局可运行的goroutine，这些`g`还没有被分配到具体的`p`。当一个goroutine被创建，或者变为可执行状态（runnable）时，就会被放到LocalQueue或者GlobalQueue中。如果LocalQueue还有剩余空间就会放到LocalQueue中，否则就会把LocalQueue中的一部分goroutine和待加入的goroutine放入GlobalQueue中。
+
+当一个`g`执行结束时，`p`会将其从队列中取出，从队列中选择下一个可运行的`g`放到`m`上执行，选择的顺序如下：
+
+1. 有一定概率先从GlobalQueue中寻找（每61次找一次）
+2. 从LocalQueue中寻找
+3. 如果前面都没有找到，会通过`runtime.fundrunnable()`进行阻塞查找：
+    1. 从LocalQueue、GlobalQueue中查找
+    2. 从网络轮询器（network poller）中查找（之后会介绍）
+    3. 如果没有找到，尝试从其他`p`的LocalQueue中进行工作偷窃（work stealing），会随机选择一个`p`，并“偷”过来这个`p`的LocalQueue中一半的`g`
+
+## 系统调用
+当`g`需要进行系统调用时，分两种情况，如果是阻塞的系统调用（syscall），那么运行当前`g`的`m`就会从依附的`p`上摘除（detach），然后创建一个新的`m`来服务于这个`p`。当系统调用完成之后，这个`g`就会被重新放入之前`p`的LocalQueue等待调度，而之前detach的`m`则会休眠，加入到空闲线程中（不会销毁，以避免频繁的创建和销毁线程，损失性能）。
+
+![同步系统调用](vx_images/1975812087146.png =480x)
+
+对于非阻塞的情况，当前`g`会被绑定到网络轮询器（network poller）上，等系统调用结束，当前`g`才会回到之前的`p`上等待调度。
+
+![异步系统调用](vx_images/2467517107312.png =487x)
+
+## 抢占式调度
+在 Go1.14 之前，是基于协作的抢占式调度。 runtime在程序启动时，会自动创建一个系统线程，运行sysmon()函数，在整个程序生命周期中一直执行。sysmon()会调用retake()函数，retake()函数会遍历所有的P，如果一个P处于执行状态， 且已经连续执行了较长时间，就会设置它的抢占标志位，这将导致该P中正在执行的G进行下一次函数调用时，会通过调用dropg()将G与M解除绑定；再调用globrunqput()将G加入全局runnable队列中。最后调用schedule() 来用为当前P设置新的可执行的G。
+
+因此，如果在goroutine内部没有一些`time.Sleep()`，channel，函数调用之类的触发调度的抢占点，那么有可能该goroutine就会一直执行，如果是无限循环，也不会被调度走，就有可能会导致其他goroutine不能得到调度。Go 1.14引入基于信号的抢占之后，这个问题得到了解决。
+
+## 推荐阅读
+- [Go语言设计与实现-调度器](https://draveness.me/golang/docs/part3-runtime/ch06-concurrency/golang-goroutine/)，比较深入，源码级别，不确定或者想知道更细节的地方可以参考这篇文章
+- [深度解密Go语言之scheduler - qcrao](https://qcrao.com/2019/09/02/dive-into-go-scheduler/)
+
 
 # sync包相关
 effective-go里有一些内容了，记个TODO，之后再补：
