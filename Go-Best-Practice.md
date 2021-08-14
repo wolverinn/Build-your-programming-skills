@@ -1,5 +1,20 @@
 # Go 性能优化&最佳实践
 
+- [最佳实践](#best-practice)
+    - [哪些情况适合放在rpc？](#哪些情况适合放在rpc)
+    - [Bulletins](#bulletins)
+- [性能优化](#performance-optimization)
+    - [字符串拼接](#字符串拼接)
+    - [对切片进行切片](#对切片进行切片)
+    - [使用`for range`迭代slice](#使用for-range迭代slice)
+    - [用map实现集合(set)](#用map实现集合set)
+    - [加锁](#加锁)
+    - [使用`sync.Pool`复用对象](#使用syncpool复用对象)
+    - [锁优化](#锁优化)
+    - [尽量在栈上分配内存](#尽量在栈上分配内存)
+
+-------
+
 # Best Practice
 ## 哪些情况适合放在rpc？
 

@@ -11,7 +11,7 @@ Golang的一些底层原理解析，在这篇笔记里我主要想学习的部�
 -------
 
 # 常用数据结构
-[slice和map的底层原理](https://blog.golang.org/slices-intro)
+[Golang 基本数据结构](./golang/Golang基本数据结构.md)
 
 # Go 内存管理
 这里的内存管理一般指的是堆内存管理，因为栈上的内存分配和回收非常简单，不需要程序操心，而堆内存需要程序自己组织、分配和回收，用于动态分配内存。Golang内存管理的主要思想源自Google的 `TCMalloc`算法，全称`Thread-Caching Malloc`，核心思想就是把内存分为多级管理，从而降低锁的粒度。即为每个线程预分配一块缓存（Thread-cache），线程申请小内存时，可以从缓存分配内存，这样做有两个好处：
