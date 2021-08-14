@@ -2,6 +2,41 @@
 
 对于编程语言来说，可以简单地分为基础和高级用法两部分，基础用法主要在于自己多写，只要多写，慢慢就会熟练了，也没有看别人总结的必要。所以这里准备总结一下进阶用法。
 
+<!-- GFM-TOC -->
+- [入门指南](#入门指南)
+- [进阶指南](#进阶指南)
+- [Useful Go Built-in Libraries](#useful-go-built-in-libraries)
+    - [time](#time)
+    - [encoding/json](#encoding/json)
+    - [net/http](#net/http)
+    - [math/rand](#math/rand)
+    - [os](#os)
+    - [strings](#strings)
+    - [strconv](#strconv)
+    - [unicode](#unicode)
+    - [sort](#sort)
+    - [testing](#testing)
+- [包管理](#包管理)
+    - [Package](#package)
+    - [Go Module](#go-module)
+- [函数进阶](#函数进阶)
+    - [函数值](#函数值)
+    - [匿名函数](#匿名函数)
+    - [变长参数](#变长参数)
+    - [defer](#defer)
+    - [捕获异常](#捕获异常)
+- [Interface & Reflect](#interface-&-reflect)
+- [并发编程：Goroutines，Channels，sync包](#并发编程-Goroutines-Channels-sync包)
+    - [Goroutines](#goroutines)
+    - [Channels](#channels)
+    - [sync.Mutex](#sync.Mutex)
+- [Go Web编程](#go-web编程)
+    - [Gorm操作数据库](#gorm操作数据库)
+
+<!-- GFM-TOC -->
+
+-------
+
 ## 入门指南
 先简单的分享一下我入门的路线，我认为不用跟着某个网课之类的从头到尾走一遍，而是先快速掌握基本的语法，然后开始上手写代码，慢慢就熟练了，并且遇到不会的高阶用法的时候，也可以再去了解。
 

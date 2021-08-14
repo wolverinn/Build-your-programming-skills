@@ -1,14 +1,16 @@
 # Go Dive
 Golang的一些底层原理解析，在这篇笔记里我主要想学习的部分有：
 
-- Slice与Map的底层实现
-- Golang内存管理
-- Golang Memory Model（内存模型）
-- 垃圾回收
-- Goroutine的原理，调度器 Scheduler
-- 并发（sync包）
+- [Slice与Map的底层实现](#常用数据结构)
+- [Golang内存管理](#go-内存管理)
+- [Golang Memory Model（内存模型）](#golang-memery-model)
+- [垃圾回收](#golang-gc)
+- [调度器 Scheduler](#golang-scheduler)
+- [并发（sync包）](#sync包相关)
 
-# slice和map的底层原理
+-------
+
+# 常用数据结构
 [slice和map的底层原理](https://blog.golang.org/slices-intro)
 
 # Go 内存管理
