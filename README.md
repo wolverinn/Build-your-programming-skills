@@ -6,10 +6,20 @@ A learning road map for junior programmers focusing from basic to advanced techn
 这个仓库主要是记录我的学习笔记，会随着我的技术学习不断更新。目前有以下部分的内容：
 
 - [Git](./Git-basic.md)
+    - 基本命令
+    - 分支管理
+    - 查看记录
+    - 提交更改
+    - 分支合并
+    - 撤销与回滚
 - Golang，分为几个部分：
     1. [Effective Go](./Effective-go.md)
     2. [Golang性能优化与最佳实践](./Go-Best-Practice.md)
     3. [Go Dive（底层原理解析）](./Go-dive.md)
+- [MySQL](./MySQL.md)
+    - InnoDB记录结构
+    - InnoDB数据页结构
+    - 索引原理
 
 ------
 剩余的篇幅，简单记录一下我所规划的技术学习路线，即我的roadmap：
