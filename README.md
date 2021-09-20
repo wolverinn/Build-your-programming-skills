@@ -6,10 +6,10 @@ A learning road map for junior programmers focusing from basic to advanced techn
 这个仓库主要是记录我的学习笔记，会随着我的技术学习不断更新。目前有以下部分的内容：
 
 - [0. Roadmap - 技术学习路线总览](#0-技术学习-roadmap)
-- [1. 深入语言 - Golang](#1-深入---golang)
+- [1. 深入语言 - Golang](#1-深入-golang)
     * [1.1 Effective Go](#11-effective-go)
-    * [1.2 Golang 性能优化与最佳实践](#13-golang-性能优化与最佳实践)
-    * [1.3 Golang 底层原理深入](#golang-底层原理深入)
+    * [1.2 Golang 性能优化与最佳实践](#12-golang-性能优化与最佳实践)
+    * [1.3 Golang 底层原理深入](#13golang-底层原理深入)
 - [2. 底层存储 - MySQL](#2-底层存储---mysql)
 - [3. 底层存储 - Redis]
 - [4. 工具类](#4-工具类)
@@ -34,13 +34,13 @@ A learning road map for junior programmers focusing from basic to advanced techn
 ## 1.2 [Golang 性能优化与最佳实践](./Go-Best-Practice.md)
 
 <div>
-<a href="./Go-Best-Practice.md" target="_blank"><img src="vx_images/1081346109387.png" width="350px"></img></a>
+<a href="./Go-Best-Practice.md" target="_blank"><img src="vx_images/2998247119387.png" width="350px"></img></a>
 </div>
 
 ## 1.3 [Golang 底层原理深入](./Go-dive.md)
 
 <div>
-<a href="./Go-dive.md" target="_blank"><img src="vx_images/2944246097254.png" width="350px"></img></a>
+<a href="./Go-dive.md" target="_blank"><img src="vx_images/1148749107254.png" width="350px"></img></a>
 </div>
 
 # 2. [底层存储 - MySQL](./MySQL.md)
@@ -53,7 +53,7 @@ A learning road map for junior programmers focusing from basic to advanced techn
 ## 4.1 [Git 基础](./Git-basic.md)
 
 <div>
-<a href="./Git-basic.md" target="_blank"><img src="vx_images/2243215100961.png" width="350px"></img></a>
+<a href="./Git-basic.md" target="_blank"><img src="vx_images/3475949127420.png" width="350px"></img></a>
 </div>
 
 
