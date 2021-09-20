@@ -235,9 +235,11 @@ select * from users left join orders on users.id = orders.user_id where orders.p
 
 MySQL会首先根据前面刚介绍过的单表访问方法，确定对驱动表的访问方法，查询出驱动表的结果集。第二步，针对从驱动表中查询出的每一条记录，到被驱动表中去查找匹配的记录。也就是说，在连接的查询中，驱动表只需要访问一次，被驱动表可能需要访问多次。
 
-上面提到的连接执行方式称为嵌套循环连接（Nested-Loop Join），也就是查询被驱动表的结果集类似一个循环，只能根据驱动表查询出的结果集一条一条记录的到被驱动表中进行匹配。当然，如果驱动表查询出的结果集只有几条记录，这样做也没问题，但现实生活中一般都有很多记录，因此这种执行方式需要进行优化。
+上面提到的连接执行方式称为嵌套循环连接（**Nested-Loop Join**），也就是查询被驱动表的结果集类似一个循环，只能根据驱动表查询出的结果集一条一条记录的到被驱动表中进行匹配。当然，如果驱动表查询出的结果集只有几条记录，这样做也没问题，但现实生活中一般都有很多记录，因此这种执行方式需要进行优化。
 
-优化方式就是，不要一次只在被驱动表中匹配一条记录，而是一次匹配一批。所以MySQL的设计者提出了一个`join buffer`的概念，`join buffer`就是执行连接查询前申请的一块固定大小的内存，先把若干条驱动表结果集中的记录装在这个`join buffer`中，然后开始扫描被驱动表，每一条被驱动表的记录一次性和`join buffer`中的多条驱动表记录做匹配，因为匹配的过程都是在内存中完成的，所以这样可以显著减少被驱动表的I/O代价。这种方式称为使用基于块的嵌套循环连接（Block Nested-Loop Join）。
+优化方式就是，不要一次只在被驱动表中匹配一条记录，而是一次匹配一批。所以MySQL的设计者提出了一个`join buffer`的概念，`join buffer`就是执行连接查询前申请的一块固定大小的内存，先把若干条驱动表结果集中的记录装在这个`join buffer`中，然后开始扫描被驱动表，每一条被驱动表的记录一次性和`join buffer`中的多条驱动表记录做匹配，因为匹配的过程都是在内存中完成的，所以这样可以显著减少被驱动表的I/O代价。这种方式称为使用基于块的嵌套循环连接（**Block Nested-Loop Join**，BNJ）。
+
+可以看出BNJ算法还是不够优化，如果被驱动表的连接条件使用到了被驱动表的索引，那么MySQL会使用 **Batched Key Access Joins**（BKA），BKA算法也是使用join buffer，不过会一次性将join buffer中的记录作为查询条件传入被驱动表进行查询。
 
 ### 子查询的执行方式
 这里主要介绍IN子查询的执行方式，比如：
@@ -299,3 +301,124 @@ Scan a subquery table using an index that enables a single value to be chosen fr
 - 进行`IN`到`EXIST`转换（略）
 - 对于不相关子查询，先进行物化之后再查询。但这时需要注意的是查询方式，比如`SELECT * FROM s1 
     WHERE key1 NOT IN (SELECT common_field FROM s2 WHERE key3 = 'a')`这个语句，只能是先扫描s1表，然后对s1表的某条记录来说，判断该记录的key1值在不在物化表中。
+
+
+## 事务之redo log
+事务的原子性、隔离性、一致性、持久性这些就不在这里介绍了。InnoDB引擎支持事务而MyISAM不支持。MySQL中事务的自动提交默认是开启的，也就是如果我们不显式开启事务，那么每条语句就默认算是一个独立的事务。接下来重点介绍redo日志。
+
+之前Buffer Pool的时候说过，当对数据页进行修改之后，不是立即刷新到磁盘，而是先存在Buffer Pool里的，而事务又需要保证持久性，也就是即使发生了崩溃，这些更改也不会丢失。因此为了满足持久性的要求，同时考虑性能（不能粗暴的每次提交事务就将Buffer Pool上修改的页刷新到磁盘），MySQL设计了**redo日志（redo log）**，思想就是在事务提交时，将每次对具体页面的具体内容的改动点同步到磁盘上，这样每次需要同步到磁盘的内容就很小，也保证了事务的持久性，崩溃之后可以按照redo日志来恢复改动点。
+
+### redo日志格式
+
+redo日志的格式比较复杂，就不在这里介绍了，简单理解一下思想就行。简单的redo日志像这样：
+
+![redo日志1](vx_images/1238206080957.png)
+
+通过上面这条redo日志可以直接定位到某个页的偏移量的具体修改内容。
+
+但上面这种只是最简单的情况。有些时候我们修改一个数据可能会修改非常多的地方，比如聚簇索引、B+树二级索引的页面，并且有可能既要更新叶子节点页面，也要更新非叶子节点页面，也有可能进行页分裂创建新的页面。除此之外，还有什么File Header、Page Header、Page Directory等等部分需要更新（可以回忆一下之前数据页结构的部分），也就是一个页面中也会有很多地方的改动，像这样：
+
+![](vx_images/2035029099383.png)
+
+因此在这种情况下，如果每个具体的修改内容都用一条redo日志来表示，那redo日志占用的空间也会挺大的，所以这种情况下MySQL又用的是另一种比较复杂的redo日志来记录。具体的redo日志格式就不看了，思想就是对于一个页面中的多处改动，不会具体记录每个地方的改动，而是记录产生这些改动的必要信息（相当于只是从逻辑层面上记录，而没有在物理层面上记录，只能用一定逻辑恢复，而不能直接依赖这些redo日志恢复页面）。之后需要恢复时，MySQL会调用相应的函数，读取这些redo日志对相应的页面进行恢复。
+
+有些操作会产生多条redo日志，并且还需要保证是原子的，比如在B+树二级索引中插入一条记录，可能会产生很多条redo日志（比如页分裂的情况），为了保证原子性，多条redo日志会以组的形式记录，在这组redo日志后面会加上一条特殊类型的redo日志，表示前面是一组完整的redo日志。如果是单个日志，在日志的type字段里会有一个比特位来表示是一条单一的redo日志。
+
+对底层页面中的一次原子访问的过程称为一个**Mini-Transaction**，一个Mini-Transaction可以包含一组redo日志。
+
+### redo日志的写入过程
+类似MySQL的一条记录是存储在数据页中，redo日志也是存储在一个大小为512 byte的block中，叫做**redo log block**，其中，redo日志存储在log block body中：
+
+![redo log block](vx_images/5719230097250.png)
+
+类似Buffer Pool，redo日志也是先写入一个缓冲区，之后再刷到磁盘，叫做**redo log buffer**，是一片连续的内存空间：
+
+![redo log buffer](vx_images/4196840117416.png)
+
+redo日志写入log buffer是顺序写入的，一个Mini-Transaction对应的一组redo日志会在这个Mini-Transaction结束之后整体写入log buffer。而redo log buffer在一些时机下会刷新到磁盘：
+
+- 写入的redo log超过一定容量时
+- 事务提交时会刷一次，为了保证事务的持久性
+- 后台线程定时刷
+- 其他时机......
+
+全局变量`buf_free`标记了当前redo日志写到的位置，还有一个全局变量`buf_next_to_write`标记了下一个需要刷新到磁盘的redo日志的位置（buf_next_to_write前面的redo日志都已经刷新到磁盘）。
+
+### Log Sequence Number
+Log Sequence Number翻译过来就是日志序列号，简称LSN，是用来记录已经产生的redo日志量的一个全局变量。具体地说，LSN是按照产生的redo日志的字节数增长的（还要加上写入的redo日志占用的log block header和log block trailer的字节数）。
+
+LSN的初始值是8704，系统启动初始化时，LSN变为8704+12=8716，因为redo日志是从log block body开始写入的，前面的log block header占了12字节。当开始写入redo日志后，LSN根据写入redo日志的字节数增加，增长的量就是生成的redo日志占用的字节数加上额外占用的log block header和log block trailer的字节数。
+
+因此可以看出，每个redo日志都有一个唯一的LSN与其对应，LSN值越小，说明redo日志产生的越早。
+
+除了LSN之外，还有一个全局变量叫`flushed_to_disk_lsn`，记录已经刷新到磁盘的redo日志的LSN。
+
+之前讲Buffer Pool的时候提到过flush链表。当某个缓存在Buffer Pool的页第一次被修改的时候就会被放入flush链表，同时会将修改该页面的Mini-Transaction开始时的LSN值写入该页面的控制块（回忆Buffer Pool的结构，每个缓存页都有一个控制块）中的`oldest_modification`字段。当这个页之后被修改时，不会重新插入flush链表，但会将最新一次修改的Mini-Transaction结束时的LSN值写入该页面的控制块的`newest_modification`字段。也就是flush链表可以看成是按照`oldest_modification`排序的。
+
+### Checkpoint
+redo日志在磁盘上也是存储在文件里的，存放在一个个以`ib_logfile[数字]`命名的文件中，像这样：
+
+![redo日志文件组](vx_images/3658022080958.png)
+
+整个redo日志文件组是循环使用的，如果最后一个文件也写满了，那就从头开始写。这样就有可能造成将之前的redo日志覆盖掉的情况。然而，只有那些对应的脏页已经同步到磁盘上的redo日志，才可以被覆盖。因此，MySQL使用一个全局变量`checkpoint_lsn`来标记对应的脏页已经刷新到磁盘的redo日志的LSN。
+
+当flush链表中的页被同步到了磁盘，这个脏页就会从flush链表中被移除，`checkpoint_lsn`就会变为flush链表中的第一个页的`oldest_modification`值，因为在这个`oldest_modification`值之前的LSN一定都是被同步到了磁盘的。计算出`checkpoint_lsn`之后，MySQL会再计算一些checkpoint信息（`checkpoint_no`，`checkpoint_offset`），然后一起存到redo日志文件组的第一个日志文件的管理信息中。
+
+（简单说一下，`checkpoint_lsn`和`flushed_to_disk_lsn`完全不是一个东西，前者标记的是脏页有多少被刷到了磁盘，后者标记的是redo日志有多少被刷到了磁盘，这两个东西都是需要记录的）
+
+### 崩溃恢复
+redo日志在一般情况下都没什么用，但如果服务器真的崩溃了，那它就很关键，可以帮助我们将页面恢复到崩溃前的状态。接下来大概看一下MySQL是如何根据redo日志来恢复页面的。
+
+首先确定恢复的起点，也就是从哪个LSN开始恢复。这个起点就是上面的`checkpoint_lsn`，因为`checkpoint_lsn`之前的redo日志对应的页面修改一定都是被刷到磁盘了的。
+
+之后确定恢复的终点，其实就是从起点一直往后找到一个没有写满的redo log block，那么它就是此次恢复中的最后一个block。
+
+在恢复的过程中，MySQL也有一些小优化：
+
+- 同一个页的redo日志按照修改顺序放到一个链表中，之后一次性将页面修改好，避免了随机IO
+- 跳过已经刷新到磁盘的页面。最开始讲数据页结构的时候看到每个页面的File Header里都有一个`FIL_PAGE_LSN`的属性，记录了最近一次修改页面时的LSN值，因此可以判断出某个LSN对应的修改是否已经同步到磁盘上了。
+
+## 事务之undo log
+上面说的redo日志主要是满足事务持久性的要求。而事务还有一个要求就是原子性，也就是执行过程中如果出错了，或者手动ROLLBACK，需要把已经修改的地方都改回事务开始前的状态。这个时候就要靠undo日志（undo log）了，和redo日志类似，undo日志就是把在事务执行过程中的增、删、改操作都记下来（查询操作不需要记录undo日志）。
+
+MySQL会为涉及了增删改操作的事务分配一个id叫做事务id，这个id是全局递增的，类似表中的自增id。事务id会存放在记录中，最开始讲记录的行格式时提到过：
+
+![trx_id](vx_images/1667406080960.png)
+
+除了事务id外，记录里面的`roll_pointer`也和事务有关，记录了指向对应的undo日志的指针。
+
+### Insert对应的undo日志
+![insert undo](vx_images/1500647099386.png)
+
+上面字段很多不必全都理解，主要有：
+
+- `undo type`：该undo日志的类型，这里insert操作对应的当然是insert类型
+- `undo no`：undo日志的编号，在一个事务的执行过程中，undo日志从0开始编号
+- `table id`：insert操作的表的table id
+- 主键各列信息：这里只需要记录主键信息就行，因为回滚的时候，只需要定位到主键，然后进行删除操作就行了，会顺带把二级索引的记录也删除掉
+
+### Delete对应的undo日志
+一个页面中的记录被删除之后，会先从正常记录的链表转移到垃圾链表中等待回收/重用，同时记录中的`delete_mask`字段置为1。而在事务提交之前，仅仅会将`delete_mask`字段置为1，还不会将这条记录移入垃圾链表：
+
+![delete1](vx_images/4408102097253.png)
+
+事务提交之后，会有专门的后台线程来把记录删掉，这个过程称为purge。
+
+删除操作对应的undo日志格式如下：
+
+![delete undo](vx_images/1478406117419.png)
+
+需要关注的主要是：
+
+- `old_trx_id`和`old_roll_pointer`，也就是在删除之前，要先将该记录的旧的事务id和`roll_pointer`记录到undo日志里，这样该记录的undo日志就能形成一个版本链：
+
+![版本链](vx_images/3252908110088.png)
+
+- 还有一个索引各列信息的内容，主要是在purge阶段使用的
+
+### Update对应的undo日志
+分为不更新主键和更新主键两种情况
+
+在不更新主键的情况下，undo日志的格式和delete的时候差不多，也会记录旧的`trx_id`和`roll_pointer`，会记录被更新列的更新前的信息，如果被更新的列包含索引，还会记录索引列各列信息。
+
+在更新主键的情况下，分为先对原记录delete再insert两个步骤，也就是会产生两条undo日志，这两条undo日志的格式上面都说过了。

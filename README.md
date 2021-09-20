@@ -20,6 +20,8 @@ A learning road map for junior programmers focusing from basic to advanced techn
     - InnoDB记录结构
     - InnoDB数据页结构
     - 索引原理
+    - Buffer Pool
+    - 查询原理与查询优化
 
 ------
 剩余的篇幅，简单记录一下我所规划的技术学习路线，即我的roadmap：
