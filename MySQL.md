@@ -239,7 +239,7 @@ MySQL会首先根据前面刚介绍过的单表访问方法，确定对驱动表
 
 优化方式就是，不要一次只在被驱动表中匹配一条记录，而是一次匹配一批。所以MySQL的设计者提出了一个`join buffer`的概念，`join buffer`就是执行连接查询前申请的一块固定大小的内存，先把若干条驱动表结果集中的记录装在这个`join buffer`中，然后开始扫描被驱动表，每一条被驱动表的记录一次性和`join buffer`中的多条驱动表记录做匹配，因为匹配的过程都是在内存中完成的，所以这样可以显著减少被驱动表的I/O代价。这种方式称为使用基于块的嵌套循环连接（**Block Nested-Loop Join**，BNJ）。
 
-可以看出BNJ算法还是不够优化，如果被驱动表的连接条件使用到了被驱动表的索引，那么MySQL会使用 **Batched Key Access Joins**（BKA），BKA算法也是使用join buffer，不过会一次性将join buffer中的记录作为查询条件传入被驱动表进行查询。
+可以看出BNJ算法还是不够优化，如果被驱动表的连接条件使用到了被驱动表的索引，那么MySQL会使用 **Batched Key Access Joins**（BKA），BKA算法也是使用join buffer，不过会一次性将join buffer中的记录作为查询条件传入被驱动表进行查询。可以参考[官方文档](https://dev.mysql.com/doc/refman/8.0/en/nested-loop-joins.html)
 
 ### 子查询的执行方式
 这里主要介绍IN子查询的执行方式，比如：
@@ -302,6 +302,8 @@ Scan a subquery table using an index that enables a single value to be chosen fr
 - 对于不相关子查询，先进行物化之后再查询。但这时需要注意的是查询方式，比如`SELECT * FROM s1 
     WHERE key1 NOT IN (SELECT common_field FROM s2 WHERE key3 = 'a')`这个语句，只能是先扫描s1表，然后对s1表的某条记录来说，判断该记录的key1值在不在物化表中。
 
+### 查询优化
+[MySQL查询优化](./mysql/MySQL查询优化原理.md)
 
 ## 事务之redo log
 事务的原子性、隔离性、一致性、持久性这些就不在这里介绍了。InnoDB引擎支持事务而MyISAM不支持。MySQL中事务的自动提交默认是开启的，也就是如果我们不显式开启事务，那么每条语句就默认算是一个独立的事务。接下来重点介绍redo日志。
