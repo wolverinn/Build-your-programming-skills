@@ -5,23 +5,44 @@ A learning road map for junior programmers focusing from basic to advanced techn
 
 这个仓库主要是记录我的学习笔记，会随着我的技术学习不断更新。目前有以下部分的内容：
 
-- [Git](./Git-basic.md)
-    - 基本命令
-    - 分支管理
-    - 查看记录
-    - 提交更改
-    - 分支合并
-    - 撤销与回滚
-- Golang，分为几个部分：
-    1. [Effective Go](./Effective-go.md)
-    2. [Golang性能优化与最佳实践](./Go-Best-Practice.md)
-    3. [Go Dive（底层原理解析）](./Go-dive.md)
-- [MySQL](./MySQL.md)
-    - InnoDB记录结构
-    - InnoDB数据页结构
-    - 索引原理
-    - Buffer Pool
-    - 查询原理与查询优化
+- [0. Roadmap - 技术学习路线总览](#技术学习-roadmap)
+- [1. 深入语言 - Golang](#1-深入-golang)
+    * [1.1 Effective Go](#1-1-effective-go)
+    * [1.2 Golang 性能优化与最佳实践](#1-3-golang-性能优化与最佳实践)
+    * [1.3 Golang 底层原理深入](#golang-底层原理深入)
+- [2. 底层存储 - MySQL](#2-底层存储-mysql)
+- [3. 底层存储 - Redis]
+- [4. 工具类](#4-工具类)
+    * [4.1 Git 基础](#4-1-git-基础)
+    * [4.2 脚本语言 - Python]
+    * [4.3 Linux 常用命令]
+    * [4.4 Vim 基础命令]
+- 5.未完待续...
+
+--------
+
+# 0. 技术学习 Roadmap
+![]()
+
+# 1. 深入 Golang
+## 1.1 [Effective Go](./Effective-go.md)
+![effective go](vx_images/1366745090961.png)
+
+## 1.2 [Golang 性能优化与最佳实践](./Go-Best-Practice.md)
+![go best practice](vx_images/1081346109387.png)
+
+## 1.3 [Golang 底层原理深入](./Go-dive.md)
+![go dive](vx_images/2944246097254.png)
+
+# 2. [底层存储 - MySQL](./MySQL.md)
+![目录待补充]()
+
+# 3. 底层存储 - Redis
+即将开始
+
+# 4. 工具类
+## 4.1 [Git 基础](./Git-basic.md)
+
 
 ------
 剩余的篇幅，简单记录一下我所规划的技术学习路线，即我的roadmap：
