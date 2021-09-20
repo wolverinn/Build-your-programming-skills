@@ -9,7 +9,7 @@ A learning road map for junior programmers focusing from basic to advanced techn
 - [1. 深入语言 - Golang](#1-深入-golang)
     * [1.1 Effective Go](#11-effective-go)
     * [1.2 Golang 性能优化与最佳实践](#12-golang-性能优化与最佳实践)
-    * [1.3 Golang 底层原理深入](#13golang-底层原理深入)
+    * [1.3 Golang 底层原理深入](#13-golang-底层原理深入)
 - [2. 底层存储 - MySQL](#2-底层存储---mysql)
 - [3. 底层存储 - Redis]
 - [4. 工具类](#4-工具类)
@@ -18,6 +18,10 @@ A learning road map for junior programmers focusing from basic to advanced techn
     * [4.3 Linux 常用命令]
     * [4.4 Vim 基础命令]
 - 5.未完待续...
+
+<div align="center">
+<img src="vx_images/20191229111930083_22798.png" width="640px"></img>
+</div>
 
 --------
 
