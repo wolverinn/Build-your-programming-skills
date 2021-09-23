@@ -26,7 +26,10 @@ A learning road map for junior programmers focusing from basic to advanced techn
 --------
 
 # 0. [技术学习 Roadmap](./Roadmap.md)
-![]()
+
+<div>
+<a href="./Roadmap.md" target="_blank"><img src="vx_images/1015300080964.png" width="350px"></img></a>
+</div>
 
 # 1. 深入 Golang
 ## 1.1 [Effective Go](./Effective-go.md)
