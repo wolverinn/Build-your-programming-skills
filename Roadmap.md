@@ -20,6 +20,7 @@
 - Linux操作系统原理，内核设计与实现
 - 面向对象，设计模式：极客时间-《设计模式之美》
 - 数据结构与算法：leetcode，《算法》，UCB网课CS 61B
+- 分布式系统：[MIT 6.824](https://github.com/chaozh/MIT-6.824)、《分布式系统：概念与设计》
 
 这些知识，不需要专门去学了，工作中也用不到，而社招面试的时候再用快速备战的方式去补就行了。
 
@@ -58,16 +59,9 @@ https://juejin.cn/user/2418581312906087/books?type=bought
 ## 更多存储
 - MongoDB
 - hive/flink
-- Elastic Search
-
-可以上极客时间找专栏看
+- Elastic Search：极客时间专栏
 
 # 进阶
-
-## 分布式
-- DDIA，永远滴神！
-- MIT 6.824：https://github.com/chaozh/MIT-6.824
-- raft 可视化：http://thesecretlivesofdata.com/raft/
 
 ## 系统设计
 其实这部分的内容感觉都可以放到面试前再看，效率最大。一亩三分地上的系统设计神贴（已排序）：
@@ -77,11 +71,44 @@ https://juejin.cn/user/2418581312906087/books?type=bought
 - https://www.1point3acres.com/bbs/thread-559285-1-1.html
 - https://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=771667&ctid=233194
 
+DDIA：https://vonng.gitbooks.io/ddia-cn/content/
+
+## 编程哲学
+
+- 《码农翻身》
+- 《代码大全》《重构》
+- 《编程珠玑》
+- 《程序员修炼之道》
+- ...
+
+## 零碎topic
+
+- Raft：[raft可视化](http://thesecretlivesofdata.com/raft/)
+- MapReduce
+
 # 源码
 
 先选一个深入就行：
 
 - 消息队列
 - gRpc
-- ginex
+- gin
 - golang的缓存/友好的开源项目
+
+## Kafka
+
+- [极客时间专栏](https://time.geekbang.org/column/intro/100050101)
+- [掘金小册](https://juejin.cn/book/6844733792683458573)
+
+## Zookeeper
+
+文章：
+
+- https://juejin.cn/post/6844903608975114247
+- https://juejin.cn/post/6844903677367418893
+
+专栏：[极客时间](https://time.geekbang.org/course/intro/100034201)
+
+## Pulsar
+
+[官方文档](https://pulsar.apache.org/docs/v2.0.1-incubating/getting-started/ConceptsAndArchitecture/)
