@@ -18,7 +18,7 @@
 - 计算机网络：《计算机网络：自顶向下方法》
 - 操作系统
 - Linux操作系统原理，内核设计与实现
-- 面向对象，设计模式：极客时间-《设计模式之美》
+- 面向对象，设计模式：极客时间-《设计模式之美》；[Golang设计模式](https://github.com/senghoo/golang-design-pattern)
 - 数据结构与算法：leetcode，《算法》，UCB网课CS 61B
 - 分布式系统：[MIT 6.824](https://github.com/chaozh/MIT-6.824)、《分布式系统：概念与设计》
 
@@ -76,15 +76,15 @@ DDIA：https://vonng.gitbooks.io/ddia-cn/content/
 ## 编程哲学
 
 - 《码农翻身》
-- 《代码大全》《重构》
+- 《代码大全》《重构》《代码整洁之道》
 - 《编程珠玑》
 - 《程序员修炼之道》
 - ...
 
 ## 零碎topic
 
-- Raft：[raft可视化](http://thesecretlivesofdata.com/raft/)
-- MapReduce
+- Raft：[raft可视化](http://thesecretlivesofdata.com/raft/)；[博客1](https://juejin.cn/post/6907151199141625870)；[raft论文翻译](https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md)
+- [MapReduce](https://juejin.cn/post/6844903812784717831)
 
 # 源码
 
@@ -111,4 +111,7 @@ DDIA：https://vonng.gitbooks.io/ddia-cn/content/
 
 ## Pulsar
 
-[官方文档](https://pulsar.apache.org/docs/v2.0.1-incubating/getting-started/ConceptsAndArchitecture/)
+- [官方文档](https://pulsar.apache.org/docs/v2.0.1-incubating/getting-started/ConceptsAndArchitecture/)；[中文](http://pulsar.apache.org/docs/zh-CN/next/concepts-architecture-overview/)
+- [Pulsar原理](https://blog.csdn.net/u010869257/article/details/83211152)
+- [Pulsar与Kafka对比](https://zhuanlan.zhihu.com/p/182573701)
+- [BooKeeper原理](http://matt33.com/2019/01/28/bk-store-realize/)
