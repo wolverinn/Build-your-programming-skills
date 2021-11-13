@@ -20,7 +20,7 @@
 - Linux操作系统原理，内核设计与实现
 - 面向对象，设计模式：极客时间-《设计模式之美》；[Golang设计模式](https://github.com/senghoo/golang-design-pattern)
 - 数据结构与算法：leetcode，《算法》，UCB网课CS 61B
-- 分布式系统：[MIT 6.824](https://github.com/chaozh/MIT-6.824)、《分布式系统：概念与设计》
+- 分布式系统：[MIT 6.824](https://github.com/chaozh/MIT-6.824)、[MIT 6.824中文笔记](https://mit-public-courses-cn-translatio.gitbook.io/mit6-824/)、《分布式系统：概念与设计》
 
 这些知识，不需要专门去学了，工作中也用不到，而社招面试的时候再用快速备战的方式去补就行了。
 
