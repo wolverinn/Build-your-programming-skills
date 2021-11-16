@@ -8,8 +8,9 @@
     - [Redis](#redis)
     - [更多存储](#更多存储)
 - [进阶](#进阶)
-    - [分布式](#分布式)
     - [系统设计](#系统设计)
+    - [编程哲学](#编程哲学)
+    - [零碎topic](#零碎topic)
 - [源码](#源码)
 
 # 计算机基础知识
@@ -85,6 +86,7 @@ DDIA：https://vonng.gitbooks.io/ddia-cn/content/
 
 - Raft：[raft可视化](http://thesecretlivesofdata.com/raft/)；[博客1](https://juejin.cn/post/6907151199141625870)；[raft论文翻译](https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md)
 - [MapReduce](https://juejin.cn/post/6844903812784717831)
+- etcd
 
 # 源码
 

@@ -11,13 +11,14 @@ A learning road map for junior programmers focusing from basic to advanced techn
     * [1.2 Golang 性能优化与最佳实践](#12-golang-性能优化与最佳实践)
     * [1.3 Golang 底层原理深入](#13-golang-底层原理深入)
 - [2. 底层存储 - MySQL](#2-底层存储---mysql)
-- [3. 底层存储 - Redis]
+- [3. 底层存储 - Redis](#3-底层存储---redis)
 - [4. 工具类](#4-工具类)
     * [4.1 Git 基础](#41-git-基础)
     * [4.2 脚本语言 - Python]
     * [4.3 Linux 常用命令]
     * [4.4 Vim 基础命令]
-- 5.未完待续...
+- [5. 零碎topic]
+- 6.未完待续...
 
 <div align="center">
 <img src="vx_images/20191229111930083_22798.png" width="640px"></img>
@@ -56,8 +57,11 @@ A learning road map for junior programmers focusing from basic to advanced techn
 <a href="./MySQL.md" target="_blank"><img src="vx_images/2941025087263.png" width="350px"></img></a>
 </div>
 
-# 3. 底层存储 - Redis
-即将开始
+# 3. [底层存储 - Redis](./Redis.md)
+
+<div>
+<a href="./Redis.md" target="_blank"><img src="vx_images/253974907211157.png" width="350px"></img></a>
+</div>
 
 # 4. 工具类
 ## 4.1 [Git 基础](./Git-basic.md)
@@ -66,3 +70,4 @@ A learning road map for junior programmers focusing from basic to advanced techn
 <a href="./Git-basic.md" target="_blank"><img src="vx_images/3475949127420.png" width="350px"></img></a>
 </div>
 
+# 5. 零碎topic
