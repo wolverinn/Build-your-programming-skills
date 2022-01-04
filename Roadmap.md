@@ -87,19 +87,20 @@ DDIA：https://vonng.gitbooks.io/ddia-cn/content/
 - Raft：[raft可视化](http://thesecretlivesofdata.com/raft/)；[博客1](https://juejin.cn/post/6907151199141625870)；[raft论文翻译](https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md)
 - [MapReduce](https://juejin.cn/post/6844903812784717831)
 - etcd
+- service mesh；dapr？
 
 # 源码
 
 先选一个深入就行：
 
 - 消息队列
-- gRpc
-- gin
-- golang的缓存/友好的开源项目
+- ~~gRpc~~，kitex
+- ~~gin~~
+- golang的缓存/友好的开源项目；[7days-golang](https://github.com/geektutu/7days-golang)
+- 可以从[大佬书单](http://xiaorui.cc/archives/3342)获得一些灵感
 
 ## Kafka
 
-- [极客时间专栏](https://time.geekbang.org/column/intro/100050101)
 - [掘金小册](https://juejin.cn/book/6844733792683458573)
 
 ## Zookeeper

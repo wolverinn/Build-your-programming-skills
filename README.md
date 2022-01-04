@@ -14,11 +14,19 @@ A learning road map for junior programmers focusing from basic to advanced techn
 - [3. 底层存储 - Redis](#3-底层存储---redis)
 - [4. 工具类](#4-工具类)
     * [4.1 Git 基础](#41-git-基础)
-    * [4.2 脚本语言 - Python]
-    * [4.3 Linux 常用命令]
-    * [4.4 Vim 基础命令]
+    * [4.2 Linux 常用命令](#42-linux-常用命令)
+    * [4.3 脚本语言 - Python]
 - [5. 零碎topic]
+    * [etcd, raft]
+    * [Elastic Search]
+    * [Zookeeper]
+    * [Service Mesh]
 - 6.未完待续...
+
+关于**个人成长**，推荐两篇我自己的思考：
+
+- 战略篇：[理解个人成长的加速度](https://mp.weixin.qq.com/s?__biz=MzU2OTk2Mzg3Mg==&amp;mid=2247483797&amp;idx=1&amp;sn=a4d52d6b959fccdcf3a1628ac7d8422e&amp;chksm=fcf7e59acb806c8cfab11ecdbddce9a111941093bbdb4168ff19880758f5144e101795899327)
+- 执行篇：[个人成长，知行合一](https://mp.weixin.qq.com/s?__biz=MzU2OTk2Mzg3Mg==&amp;mid=2247483832&amp;idx=1&amp;sn=89089add5c36939adde10c28fa374033&amp;chksm=fcf7e5b7cb806ca16933ab01daf7b082cc6bb8facf85ac233bdb0fb25c570fb2bc8e93536fda)
 
 <div align="center">
 <img src="vx_images/20191229111930083_22798.png" width="640px"></img>
@@ -69,5 +77,7 @@ A learning road map for junior programmers focusing from basic to advanced techn
 <div>
 <a href="./Git-basic.md" target="_blank"><img src="vx_images/3475949127420.png" width="350px"></img></a>
 </div>
+
+## 4.2 [Linux 常用命令](./Linux-from-scratch.md)
 
 # 5. 零碎topic
