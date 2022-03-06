@@ -17,10 +17,7 @@ A learning road map for junior programmers focusing from basic to advanced techn
     * [4.2 Linux 常用命令](#42-linux-常用命令)
     * [4.3 脚本语言 - Python]
 - [5. 零碎topic]
-    * [etcd, raft]
-    * [Elastic Search]
-    * [Zookeeper]
-    * [Service Mesh]
+    * [5.1 Elastic Search](#51-elastic-search)
 - 6.未完待续...
 
 关于**个人成长**，推荐两篇我自己的思考：
@@ -81,3 +78,6 @@ A learning road map for junior programmers focusing from basic to advanced techn
 ## 4.2 [Linux 常用命令](./Linux-from-scratch.md)
 
 # 5. 零碎topic
+追求技术广度，大概了解就行
+
+## 5.1 [Elastic Search](./ES.md)

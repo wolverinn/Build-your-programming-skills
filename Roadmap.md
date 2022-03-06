@@ -76,17 +76,18 @@ DDIA：https://vonng.gitbooks.io/ddia-cn/content/
 
 ## 编程哲学
 
-- 《码农翻身》
 - 《代码大全》《重构》《代码整洁之道》
 - 《编程珠玑》
+- 《程序员的职业素养》
 - 《程序员修炼之道》
+- The Passionate Programmer: Creating a Remarkable Career in Software Development
+- The Pragmatic Programmer - your journey to mastery(20th Anniversary Edition)
 - ...
 
 ## 零碎topic
 
-- Raft：[raft可视化](http://thesecretlivesofdata.com/raft/)；[博客1](https://juejin.cn/post/6907151199141625870)；[raft论文翻译](https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md)
+- Raft
 - [MapReduce](https://juejin.cn/post/6844903812784717831)
-- etcd
 - service mesh；dapr？
 
 # 源码
@@ -94,6 +95,7 @@ DDIA：https://vonng.gitbooks.io/ddia-cn/content/
 先选一个深入就行：
 
 - 消息队列
+- golang源码：调度器、map、context......
 - ~~gRpc~~，kitex
 - ~~gin~~
 - golang的缓存/友好的开源项目；[7days-golang](https://github.com/geektutu/7days-golang)
