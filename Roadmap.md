@@ -60,7 +60,7 @@ https://juejin.cn/user/2418581312906087/books?type=bought
 ## 更多存储
 - MongoDB
 - hive/flink
-- Elastic Search：极客时间专栏
+- Elastic Search
 
 # 进阶
 
