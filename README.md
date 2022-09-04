@@ -18,8 +18,11 @@ A learning road map for junior programmers focusing from basic to advanced techn
     * [4.3 脚本语言 - Python]
 - [5. 零碎topic](#5-零碎topic)
     * [5.1 Elastic Search](#51-elastic-search)
-    * Mongo/Hive
+    * Mongo
+    * Service Mesh
+    * 服务发现：etcd、consul
 - 6.未完待续...
+- 7.[其他中间件](https://www.1point3acres.com/bbs/thread-794869-1-1.html)
 
 关于**个人成长**，推荐两篇我自己的思考：
 

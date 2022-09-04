@@ -58,7 +58,7 @@ https://juejin.cn/user/2418581312906087/books?type=bought
 《Redis设计与实现》
 
 ## 更多存储
-- MongoDB
+- MongoDB：[了解 MongoDB 看这一篇就够了](https://www.infoq.cn/article/hr3fclptdbxf9j8epo9o)；[Mongo官方中文手册](https://docs.mongoing.com/)
 - hive/flink
 - Elastic Search
 
@@ -73,6 +73,7 @@ https://juejin.cn/user/2418581312906087/books?type=bought
 - https://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=771667&ctid=233194
 
 DDIA：https://vonng.gitbooks.io/ddia-cn/content/
+《System Design Interview - An Insider's Guide: Volume 2》
 
 ## 编程哲学
 
