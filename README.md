@@ -20,9 +20,9 @@ A learning road map for junior programmers focusing from basic to advanced techn
     * [5.1 Elastic Search](#51-elastic-search)
     * [5.2 Service Mesh](#52-service-mesh)
     * [5.3 跳表、LSM树](#53-跳表lsm树)
-    * 服务发现：etcd、consul
-- 6.底层存储 - MongoDB
-- 7.[其他中间件](https://www.1point3acres.com/bbs/thread-794869-1-1.html)
+- [6. 底层存储 - MongoDB](#6-底层存储---mongodb)
+- [7.其他中间件](https://www.1point3acres.com/bbs/thread-794869-1-1.html)
+- [8. 系统设计]
 
 关于**个人成长**，推荐两篇我自己的思考：
 
@@ -99,3 +99,5 @@ A learning road map for junior programmers focusing from basic to advanced techn
 - 跳表原理与场景
 - B+树原理与场景
 - LSM树原理与场景
+
+# 6. [底层存储 - MongoDB](./MongoDB.md)
