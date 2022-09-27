@@ -101,3 +101,7 @@ A learning road map for junior programmers focusing from basic to advanced techn
 - LSM树原理与场景
 
 # 6. [底层存储 - MongoDB](./MongoDB.md)
+
+<div>
+<a href="./MongoDB.md" target="_blank"><img src="vx_images/420565808230888.png" width="350px"></img></a>
+</div>
