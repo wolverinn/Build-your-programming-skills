@@ -21,8 +21,9 @@ A learning road map for junior programmers focusing from basic to advanced techn
     * [5.2 Service Mesh](#52-service-mesh)
     * [5.3 跳表、LSM树](#53-跳表lsm树)
 - [6. 底层存储 - MongoDB](#6-底层存储---mongodb)
-- [7.其他中间件](https://www.1point3acres.com/bbs/thread-794869-1-1.html)
-- [8. 系统设计]
+- [7. 消息队列 - Kafka](#7-消息队列---kafka)
+- [8.其他中间件](https://www.1point3acres.com/bbs/thread-794869-1-1.html)
+- [9. 系统设计]
 
 关于**个人成长**，推荐两篇我自己的思考：
 
@@ -105,3 +106,5 @@ A learning road map for junior programmers focusing from basic to advanced techn
 <div>
 <a href="./MongoDB.md" target="_blank"><img src="vx_images/420565808230888.png" width="350px"></img></a>
 </div>
+
+# 7. [消息队列 - Kafka](./kafka.md)

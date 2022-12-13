@@ -27,6 +27,7 @@
 - ```git status```：查看本地文件当前的改动状态
 - ```git diff```，```git diff fileName```：git add 之前，查看每个文件具体的改动
 - ```git log```，```git log --graph --pretty=oneline --abbrev-commit```：查看提交记录
+- `git remote prune origin`删除不必要的远程分支
 - ~~标签管理```git tag```，还没有用到过~~
 
 ## 分支管理
@@ -34,7 +35,7 @@
 - 查看本地所有分支：```git branch```
 - 切换到其他分支：```git checkout BRANCH_NAME```
 - 删除分支：```git branch -d BRANCH_NAME```
-- 拉取远程指定分支：先```git fetch origin BRANCH_NAME```，再```git checkout -b BRANCH_NAME origin/BRANCH_NAME```
+- 拉取远程指定分支：先```git fetch origin BRANCH_NAME```，再```git checkout -b BRANCH_NAME origin/BRANCH_NAME```；或者先到master分支`git pull`，再直接`git checkout BRANCH_NAME`就可以
 
 ## 查看记录
 - 查看当前分支的所有commit：```git log```，```git log --graph --pretty=oneline --abbrev-commit```
