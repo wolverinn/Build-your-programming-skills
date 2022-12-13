@@ -108,3 +108,7 @@ A learning road map for junior programmers focusing from basic to advanced techn
 </div>
 
 # 7. [消息队列 - Kafka](./kafka.md)
+
+<div>
+<a href="./kafka.md" target="_blank"><img src="vx_images/240093909221254.png" width="350px"></img></a>
+</div>
