@@ -24,6 +24,7 @@ A learning road map for junior programmers focusing from basic to advanced techn
 - [7. 消息队列 - Kafka](#7-消息队列---kafka)
 - [8.其他中间件](https://www.1point3acres.com/bbs/thread-794869-1-1.html)
 - [9. 系统设计]
+- [10. Side Project](./side_project/overview.md)
 
 关于**个人成长**，推荐两篇我自己的思考：
 

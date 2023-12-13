@@ -52,6 +52,7 @@ arr = append(arr, 1, 2, 3, 4, 5)
 - slice预先分配内存（指定cap）可以提升性能，但使用index赋值而非append性能甚至更好
 - slice 的一些trick操作：https://ueokande.github.io/go-slice-tricks/
 - 使用 `for ... range`迭代slice时，在循环开始前仅会计算一次迭代次数，在迭代过程中修改slice不会影响迭代次数
+- [slice常见错误](https://mp.weixin.qq.com/s/0n-NfP-fXBGHXifmkSpw8Q)
 
 关于slice，推荐golang的官方博客：[slice原理介绍](https://blog.golang.org/slices-intro)
 
