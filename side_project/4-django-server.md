@@ -1,12 +1,10 @@
 # 如何自定义模板服务端代码
 
-参考：[django系列](https://www.jianshu.com/nb/30051783)
-
 获取付费版模板代码：
 
 ## 本地安装
 
-安装django：
+安装python包依赖：
 
 ```bash
 pip3 install -r requirements.txt
