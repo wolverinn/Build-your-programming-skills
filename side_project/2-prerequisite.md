@@ -2,6 +2,14 @@
 
 我是按照我最近做个人项目的路径来写的这个教程，所以只会涉及特定的技术栈，但是对于不涉及客户端、游戏的项目来说，也基本够用了。
 
+目录：
+
+- Git
+- Linux
+- Python3
+- Nextjs
+- Django框架
+
 # 开发技能
 
 ## Git相关知识
@@ -872,6 +880,17 @@ Django是一个基于python的web服务端框架，我们可以用它来写后�
    |--models.py // 存放sql表定义
    |--admin.py // 注册管理后台可以管理的sql表
 ```
+
+如果是从零创建项目，要注意`tti/wsgi.py`中要加入下面的代码：
+
+```py
+from os.path import join,dirname,abspath
+PROJECT_DIR = dirname(dirname(abspath(__file__)))
+import sys
+sys.path.insert(0,PROJECT_DIR)
+```
+
+`tti/settings.py`中的`ALLOWED_HOSTS`需要更改。
 
 从`project_dir/urls.py`将path路由到`app_dir/urls.py`的方法如下：
 
