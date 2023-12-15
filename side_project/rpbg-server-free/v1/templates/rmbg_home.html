@@ -1,0 +1,387 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Access-Control-Allow-Origin" content="https://wlb-team-rmbg.oss-cn-beijing.aliyuncs.com" />
+    <title>test</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.13.0/themes/smoothness/jquery-ui.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.13.0/themes/smoothness/jquery-ui.css"
+    />
+    <script>
+      $(document).ready(function () {
+        $(".tab li").click(function () {
+          var tab_id = $(this).index();
+
+          $(".tab li").removeClass("active");
+          $(this).addClass("active");
+
+          $(".tab-content .tab-pane").removeClass("active");
+          $(".tab-content .tab-pane").eq(tab_id).addClass("active");
+        });
+      });
+    </script>
+    <script>
+      let disable_btn = false;
+      function disableBtn() {
+        $(".submit-btn").prop("disabled", true);
+        $(".submit-btn").css("background-color", "grey");
+        $(".submit-btn").css("cursor", "auto");
+        $(".submit-btn:hover").css("background-color", "grey");
+        disable_btn = true;
+        $(".submit-btn").text("生成中...");
+      }
+      function enableBtn() {
+        $(".submit-btn").prop("disabled", false);
+        $(".submit-btn").css("background-color", "rgb(12, 137, 246)");
+        $(".submit-btn").css("cursor", "pointer");
+        $(".submit-btn:hover").css("background-color", "darkblue");
+        disable_btn = false;
+        $(".submit-btn").text("Send");
+      }
+      function processErr(err) {
+        if (err == "need_verify") {
+          $("#dialog-confirm").dialog("open");
+        } else {
+          alert(err);
+        }
+        return;
+      }
+      function generate(index) {
+        // 处理按钮
+        disableBtn();
+        $("#image-container").empty()
+        var api = "/rmbg/exec";
+        var fileInput = $("#image-file1")[0];
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append("image", file);
+        // $.ajaxSetup({
+        //   beforeSend: function (xhr, settings) {
+        //     if (
+        //       !/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) &&
+        //       !this.crossDomain
+        //     ) {
+        //       xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        //     }
+        //   },
+        // });
+        $.ajax({
+          url: api,
+          type: "POST",
+          // dataType: "json",
+          processData: false,
+          contentType: false,
+          data: formData,
+          success: function (response) {
+            // 如果成功获取到图片信息，创建一个新的图片元素
+            console.log("generate success");
+            if ("err" in response && response["err"] != "") {
+              enableBtn();
+              return processErr(response["err"]);
+            }
+
+            console.log(response);
+            console.log(response["img_data"]);
+            // $("image-container").click(function () {
+            //   var imageUrl = response["img_data"];
+            //   var newWindow = window.open();
+            //   newWindow.location.href = imageUrl;
+            // });
+
+            // var link = document.createElement('a');
+            // link.href = response["img_data"];
+            // link.download = '';
+            // link.style.display = 'none';
+            //
+            // document.body.appendChild(link);
+            // $(link).click();
+            // document.body.removeChild(link);
+            //
+            // // const image = new Image();
+            $.ajax({
+              url: response["img_data"],
+              type: "GET",
+              xhrFields: {
+                  responseType: "blob"
+              },
+              success: function(blobData){
+                  let url = window.URL || window.webkitURL;
+                  let downloadUrl = url.createObjectURL(blobData);
+
+                  var link = document.createElement('a');
+                  link.href = downloadUrl;
+                  link.download = '';  // 图片的文件名，如果想要的话
+                  link.style.display = 'none';  // 隐藏 <a> 元素
+
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+              }
+          });
+
+            // 设置图片的src属性为base64信息
+            // image.src = response["img_data"];
+            //
+            // // 监听图片加载完成事件
+            // image.onload = function () {
+            //   // 将图片添加到网页中
+            //   $("#image-container").empty().append(image);
+            //   // 给图片添加点击事件
+            //   $(image).on("click", function () {
+            //     $.fancybox.open({
+            //       src: this.src,
+            //       type: "image",
+            //     });
+            //   });
+            // };
+            enableBtn();
+          },
+          error: function (xhr, status, error) {
+            console.error("Ajax请求失败：", error);
+            enableBtn();
+          },
+        });
+      }
+    </script>
+    <script>
+      function getPath() {
+        var url = window.location;
+        // 使用正则表达式提取路径
+        var regex = /^(?:https?:\/\/)?[^\/]+([\S\s]*)$/;
+        var results = regex.exec(url);
+        if (!results) {
+          return "";
+        }
+        if (!results[1]) {
+          return "";
+        }
+        path = results[1];
+        console.log(path); // 输出："/v1/path/"
+        return path;
+      }
+      $(function () {
+        $("#dialog-confirm").dialog({
+          autoOpen: false,
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            确定: function () {
+              $(this).dialog("close");
+              window.location.href = "/verify_page/?redirect=" + getPath();
+            },
+            取消: function () {
+              $(this).dialog("close");
+            },
+          },
+        });
+      });
+    </script>
+    <style>
+      /* style for toggle tab */
+      .tab {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .tab li {
+        display: inline-block;
+        padding: 10px 20px;
+        cursor: pointer;
+      }
+
+      .tab li.active {
+        background-color: #ccc;
+      }
+
+      .tab-content .tab-pane {
+        display: none;
+      }
+
+      .tab-content .active {
+        display: block;
+      }
+    </style>
+    <style>
+      body {
+        background-color: #212121;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        /* min-height: 70vh; */
+        margin: 0;
+      }
+      .page-element {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 20px auto;
+        font-family: Arial, sans-serif;
+      }
+
+      #input-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px;
+        /* margin-top: 10px; */
+      }
+      #image-file1,#image-file2 {
+        background-color: #424242;
+        max-width: 100%;
+        border: none;
+        padding: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        color: #f5f5f5;
+      }
+      #preview-image {
+        max-width: 70%;
+        height: auto;
+      }
+
+      .submit-btn {
+        background-color: #03dac6;
+        color: #f5f5f5;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+      }
+
+      .submit-btn:hover {
+        background-color: #018786;
+      }
+
+      #image-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding-top: 2%;
+      }
+
+      /* Media Queries */
+      @media only screen and (max-width: 600px) {
+        .input_text {
+          width: 90%;
+        }
+        .submit-btn {
+          font-size: 14px;
+          padding: 8px 16px;
+        }
+        .page-element {
+          margin: 10px auto;
+        }
+        h1 {
+          font-size: 24px;
+          margin-bottom: 10px;
+        }
+        #input-box {
+          margin-bottom: 0;
+        }
+        #image-file1,#image-file {
+          font-size: 14px;
+          margin-top: 10px;
+          margin-bottom: 10px;
+        }
+        p {
+          font-size: 14px;
+          text-align: center;
+          margin-bottom: 10px;
+        }
+        label {
+          font-size: 14px;
+        }
+        #image-container {
+          padding-top: 1%;
+        }
+      }
+    </style>
+    <style>
+      .fixed-bottom {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: #f5f5f5;
+        padding: 10px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-element">
+      <h1>去除背景</h1>
+      <div class="tab-content">
+        <div class="tab-pane active">
+          <div id="input-box">
+            <p>
+              将图像转换为动漫画风（人脸支持不友好）<br />点击生成后请等待20s
+              <!-- <br/>本月额度已用完，请等待我们升级API -->
+            </p>
+            <p></p>
+            <label for="upload">请上传图片：</label>
+            <input type="file" id="image-file1" />
+            <img id="preview-image1" src="" />
+            <button
+              onclick="generate(1)"
+              class="submit-btn"
+              autocomplete="false"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="image-container"></div>
+      <!-- <img src="{ uri }" width="512" height="512"> -->
+      <div id="cnt">
+        <p>模型已运行{{cnt}}次</p>
+      </div>
+    </div>
+    <footer class="fixed-bottom">
+      <a style="margin-right: 15px" href="/">首页</a>
+      &nbsp;
+      <a
+        style="margin-right: 20px"
+        href="https://t.zsxq.com/0dMybvTUe"
+        target="_blank"
+        >手把手带你做AIGC个人项目</a
+      >
+    </footer>
+    <script>
+      // 给文件上传控件添加change事件监听器
+      $("#image-file1").on("change", function (event) {
+        // 获取用户选择的图片文件对象
+        console.log("change");
+        var file = event.target.files[0];
+        if (file) {
+          console.log("get img");
+          // 创建FileReader对象
+          var reader = new FileReader();
+          // 读取图片文件并转换成base64编码格式的字符串
+          reader.readAsDataURL(file);
+          reader.onload = function () {
+            // 将转换后的base64编码字符串作为图片的src属性值，将图片展示在页面上
+            $("#preview-image1").attr("src", reader.result);
+          };
+        }
+      });
+    </script>
+  </body>
+</html>

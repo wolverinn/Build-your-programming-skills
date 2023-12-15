@@ -1,6 +1,7 @@
 # 如何自定义模板前端代码
 
-获取付费版模板代码：
+- 前端模板代码免费版：[web-starter-template-free](./web-starter-template-free)；
+- 获取付费版模板代码：
 
 ## 本地安装
 

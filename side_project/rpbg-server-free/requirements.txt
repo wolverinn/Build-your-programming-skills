@@ -1,0 +1,9 @@
+django
+django-cors-headers
+# rembg
+pillow
+oss2
+replicate
+# webuiapi
+importlib_metadata
+redis
