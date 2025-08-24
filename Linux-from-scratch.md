@@ -122,6 +122,7 @@ sudo dpkg -i google-chrome-stable_current_amd64.deb
     - 将本地生成的SSH公钥id_ras.pub中的内容添加到服务器的~/.ssh/authorized_keys
 
 - 分解因数：```factor XXX```
+- [protect-ssh-with-fail2ban](https://linuxiac.com/how-to-protect-ssh-with-fail2ban/)
 
 
 ## 系统/网络

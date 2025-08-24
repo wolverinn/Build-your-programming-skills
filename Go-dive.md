@@ -223,7 +223,7 @@ func main() {
 - 对一个无缓冲channel的接收操作 happens before 发送操作完成（意思就是发送会阻塞，直到被接收）
 - 带缓冲的channel也是一样，超出缓冲区的发送会阻塞
 
-对于最开始的那几段有问题的代码，解决办法就是通过同步原语来给两个事件明确排序。可以用`sync.Mutex()`，也可以用``channel
+对于最开始的那几段有问题的代码，解决办法就是通过同步原语来给两个事件明确排序。可以用`sync.Mutex()`，也可以用`channel`
 
 ## 推荐阅读
 关于 Golang Memory Model，就推荐一篇文章，[官方文章](https://golang.org/ref/mem)，讲的很清楚
@@ -270,7 +270,7 @@ Goroutine 的切换约为 200 ns，相当于 2400-3600 条指令。
 
 - `g`：一个`g`表示了一个goroutine，主要包含了当前goroutine栈的一些字段
 - `m`：代表一个操作系统的线程，goroutine需要调度到`m`上运行。`m`可以理解为“machine”
-- `p`：一个抽象的处理器，可以理解为**Logical Processor**，通常P的数量等于CPU核数（GOMAXPROCS）。`m`需要获得`p`才能运行`g`
+- `p`：一个抽象的处理器，可以理解为**Logical Processor**，通常P的数量等于CPU核数（GOMAXPROCS）。`m`需要获得`p`才能运行`g`。M（系统线程）必须先获取到一个 P，才能从 P 的本地队列中获取 G 来执行，而 P 本身只是一个调度资源和上下文，不直接执行代码，它需要与 M 绑定后才能发挥作用。
 
 早期版本的Golang是没有P的，调度是由G与M完成。 这样的问题在于每当创建、终止Goroutine或者需要调度时，需要一个全局的锁来保护调度的相关对象。 全局锁严重影响Goroutine的并发性能。
 

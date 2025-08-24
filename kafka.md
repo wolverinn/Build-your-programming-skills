@@ -96,7 +96,7 @@
 2.  高可用性： topic下有多个partition，partition放在不同的服务器，再通过副本策略，即使有broker挂掉，不至于服务不可用。
     
 
-3.  增加可扩展性：每个topic中保留的消息可能非常庞大，通过partition将消息切分成多个子消息，并通过负责均衡策略将partition分配到不同server。这样当机器负载满的时候，通过扩容可以将消息重新均匀分配。
+3.  增加可扩展性：每个topic中保留的消息可能非常庞大，通过partition将消息切分成多个子消息，并通过负载均衡策略将partition分配到不同server。这样当机器负载满的时候，通过扩容可以将消息重新均匀分配。
     
 
 思考：一般消息队列消费消息可以通过push和pull两种方式，Kafka consumer使用pull而不是push的原因是什么？
@@ -439,7 +439,7 @@ kafka如何保证高可靠性
 
 在Kafka的早期版本中，集群管理依赖于Zookeeper，每个broker都会在Zookeeper上为分区和副本注册大量的监听器，当分区或者副本状态变化时，会唤醒很多不必要的监听器，导致zookeeper压力过大。新版本中，集群中的一个broker会被选举为Controller，它负责管理集群中所有分区和副本的状态，减轻了zookeeper的压力。
 
-  
+当 Kafka 集群启动或当前 Controller 失效后，所有 Broker 都会尝试在 Zookeeper 中创建一个临时节点 “/controller”，首先成功创建该节点的 Broker 就成为新的 Controller。如果 Controller 失效，Zookeeper 会通知其他 Broker，然后重复上述过程选出新的 Controller。
 
 ## Topic管理
 
@@ -456,6 +456,7 @@ kafka如何保证高可靠性
 ## Leader选举
 
   Partition leader宕机后，controller会通过zookeeper watcher感知，并重新选举出partition的leader。
+  Controller 会从该分区的 ISR 列表中选择一个新的 leader，通常选择 ISR 列表中最前面的那个副本作为新的 leader，选择标准也可配置，如选择拥有最新偏移量的副本等。一旦新的 leader 被选定，Controller 会更新相应的元数据，并将这个变更广播给集群中的所有 Broker。
 
 ## 集群成员管理
 
