@@ -128,4 +128,4 @@
 
 - 前端模板代码免费版：[web-starter-template-free](./web-starter-template-free)
 
-- 获取付费版模板代码：
+- 获取付费版模板代码：[文章](https://mp.weixin.qq.com/s/eP4XJgjKzbeHZBrXG1os7w)
