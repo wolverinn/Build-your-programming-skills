@@ -88,7 +88,7 @@ type mcentral struct {
 1. `free`：`free`中保存的`mspan`是空闲并且非垃圾回收的`mspan`。
 2. `scav`：`scav`中保存的是空闲并且已经垃圾回收的`mspan`。
 
-如果是垃圾回收导致的`mspan`释放，`mspan`会被加入到`scav`，否则加入到`free`，比如刚从OS申请的的内存也组成的`mspan`。
+如果是垃圾回收导致的`mspan`释放，`mspan`会被加入到`scav`，否则加入到`free`，比如刚从OS申请的的内存页组成的`mspan`。
 
 堆区总览：
 
