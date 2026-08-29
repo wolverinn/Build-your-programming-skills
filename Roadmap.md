@@ -74,6 +74,7 @@ https://juejin.cn/user/2418581312906087/books?type=bought
 
 DDIA：https://vonng.gitbooks.io/ddia-cn/content/
 《System Design Interview - An Insider's Guide: Volume 2》
+- [按公司筛选的系统设计练习题库](https://prachub.com/categories/system-design)
 
 ## 编程哲学
 
